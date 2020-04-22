@@ -31,6 +31,14 @@ $timestamp = new Timestamp();
 $horario_id = null;
 $T->setVar('__hostname',getHostname());
 
+$T->setVar('remote__addr_ip', remote__addr);
+$T->setVar('http__client_ip', http__client__ip);
+
+ gethostbyaddr($_SERVER['REMOTE_ADDR']);
+//echo $_SERVER['REMOTE_ADDR'];
+//echo $_SERVER['HTTP_CLIENT_IP'];
+
+echo $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_CLIENT_IP'];
 
 
 if($menu_id!=92){
