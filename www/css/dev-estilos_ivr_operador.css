@@ -1,0 +1,157 @@
+.estiloNumero{
+	text-align: center; 
+	font-size: 12px; 
+	padding: 5px 6px 5px 14px;
+}
+
+.textoBoton{
+	padding: 1px 13px 1px 6px; 
+	text-decoration: underline; 
+	color: blue
+}
+
+.textoBoton:hover{
+	text-decoration: none; 
+}
+
+.celdaNaranja {
+    padding: 1px 6px 1px 6px;
+    background-color: #f47001;
+}
+
+.textoDato{
+	text-align: center; 
+	font-size: 12px; 
+	padding: 5px 6px 5px 14px;
+}
+
+.llamadas{
+	background-color: #fff;
+	text-align: right;
+}
+
+.celdaSubTitulo{
+	background-color: #ffc69d; 
+	padding: 5px 6px 5px 14px;
+	font-size: 12px;
+}
+
+.celdaSubTituloB{
+	background-color: #fff; 
+	padding: 5px 6px 5px 14px;
+	font-size: 12px;
+}
+
+.bordes-datos-claro{
+	background-color: #ffc69d;
+	border-collapse: separate;
+	text-align: right;
+	font-size: 12px;
+	padding: 1px 13px 1px 6px;
+}
+
+.bordes-datos-oscuro{
+	background-color: #fff;
+	border-collapse: separate;
+	text-align: right;
+	font-size: 12px;
+	padding: 1px 13px 1px 6px;
+}
+
+.bordes-string-claro{
+	background-color: #ffc69d;
+	border-collapse: separate;
+	text-align: right;
+	user-select: none;
+	color: #a9a9a9;
+	font-size: 12px;
+	padding: 1px 13px 1px 6px;
+}
+
+.bordes-string-oscuro{
+	background-color: #fff;
+	border-collapse: separate;
+	text-align: right;
+	user-select: none;
+	color: #a9a9a9;
+	font-size: 12px;
+	padding: 1px 13px 1px 6px;
+}
+
+.efectoBoton:hover{
+	z-index: 10;
+	cursor: pointer; 
+	background-color: #f47001; 
+	color: white;
+}
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	padding-top: 100px;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+
+}
+
+.modal-content {
+	position: relative;
+	margin: auto;
+	padding: 0;
+	width: 30%;
+	border-radius: 15px;
+	box-shadow:0 4px 10px 0 rgba(0,0,0,0.2),0 4px 20px 0 rgba(0,0,0,1);
+}
+
+.modal-header {
+	padding: 2px 12px;
+	background-color: #f47001;
+	color: white;
+	border-radius: 15px 15px 0px 0px;
+	-moz-border-radius: 15px 15px 0px 0px;
+	-webkit-border-radius: 15px 15px 0px 0px;
+	text-align: center;
+}
+
+.modal-body {
+	padding: 2px 16px;
+	background-color: #fff0e4;
+	overflow-y: auto; 
+	height: 400px;
+}
+
+.no-seleccionable {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none; 
+}
+
+.closex {
+	color: #fff;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	padding-right: 20;
+	padding-top: 1%;
+}
+
+.closex:hover,
+.closex:focus {
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.textoIvr{
+	padding: 1px 6px 1px 6px;
+	font-size: 12px;
+}
+
+.chartdiv {
+	width: 100%;
+	height: 300px;
+}		

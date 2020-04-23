@@ -1,0 +1,202 @@
+<!-- BEGIN BLOQUE_MONITORES -->
+<script type="text/javascript">
+	var chart_disponibilidad_detallada_{__monitor_id};
+	var chart_disponibilidad_detallada_real_{__monitor_id};
+	var color_sla_ok='#5FB404';
+        var color_sla_error='#d22129';
+	$(document).ready(function() {
+		
+								
+		//GRAFICO 2
+		chart_disponibilidad_detallada_real_{__monitor_id} = new Highcharts.Chart({
+			exporting: { enabled: false},
+			credits : {
+			    enabled : false
+				},
+				
+			chart: {
+				renderTo: 'disponibilidad_detallada_real_{__monitor_id}',
+				zoomType: 'y',
+				height:300,
+				marginRight:30,
+				type: 'column',
+	            resetZoomButton: {
+	                theme: {
+	                    fill: 'white',
+	                    stroke: 'silver',
+	                    r: 0,
+	                    states: {
+	                        hover: {
+	                            fill: '#41739D',
+	                            style: {
+	                                color: 'white'
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold', fontFamly:'Verdana, Arial, Helvetica, sans-serif' },
+				text: 'Disponibilidad Real'
+			},
+			xAxis: [{
+				lineColor: '#c0c0c0',
+				gridLineWidth: 0.3,
+				title: {
+					style: { color: '#5A5A5A', fontSize: '12px', fontWeight: 'bold', fontFamly:'Verdana, Arial, Helvetica, sans-serif' },
+					text: 'Pasos'
+				},
+				labels:{
+					useHTML:true,
+					step:{__step},
+					formatter: function() {
+						return '<div style="width: 90px; overflow: hidden; text-overflow: ellipsis; float: left; white-space: nowrap">'+ {__label} +'</div>';
+					}
+				},
+				categories: [
+					<!-- BEGIN SERIES_NAME -->
+					"{__series_name}",
+					<!-- END SERIES_NAME -->	             
+			    ]
+			}],
+			yAxis: [{
+				lineColor: '#c0c0c0',
+				gridLineWidth: 0.3,
+				lineWidth: 1,
+				min: 0,
+				max:100,
+				minRange:6,
+				labels: {
+					formatter: function() {
+						return Highcharts.numberFormat(this.value, 0);
+					},
+				},
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Disponibilidad [%]',
+				},
+				plotLines: [					                
+					<!-- BEGIN TIENE_SLA_OK -->
+					{
+						color: color_sla_ok,
+						width: 2,
+						value: parseFloat({__sla_ok_value})
+					},
+					{	color: color_sla_ok,
+						width: 2,
+						value: parseFloat({__sla_ok_value}),								
+						label: {
+		                    text: parseFloat({__sla_ok_value}),
+		                    style:{
+		                    	color:'#54a51c',
+		                    	'font-size':11
+		                    },
+		                    x: 30,
+		                    align: 'right',				                    
+		                },
+		                zIndex: 5,
+					},
+					<!-- END TIENE_SLA_OK -->            
+					<!-- BEGIN TIENE_SLA_ERROR -->            
+					{
+						color: color_sla_error,
+						width: 2,
+						value: parseFloat({__sla_error_value})
+					},
+					{
+						color: color_sla_error,
+						width: 2,
+						value: {__sla_error_value},
+						label: {
+							text: {__sla_error_value},
+		                    style:{
+		                    	color:'#D22129',
+		                    	'font-size':11,
+		                    },
+		                    align: 'right',
+		                    y:10,
+		                    x: 30
+		                },
+					}							
+			    	<!-- END TIENE_SLA_ERROR --> 
+			    ],
+				stackLabels: {
+					enabled: false,
+					style: {
+						fontWeight: 'bold',
+					}
+				}
+			}],
+			tooltip: {
+                                followPointer:true,
+				style: { fontSize: '11px' },
+				backgroundColor:'rgba(255,255,255,1)',
+				formatter: function() {
+					return '<b>'+this.x+'</b><br/>'+
+					'<b>'+this.series.name+': </b>' + Highcharts.numberFormat(this.y, 2) + ' %';
+				},
+			},
+			legend: {
+				enabled:false
+			},
+			plotOptions: {
+				column: {
+					stacking: 'normal',
+					dataLabels: {
+						enabled: false,
+					},
+				},
+			    series: {
+	               animation: false,
+	               shadow:false,
+	               borderWidth:0,
+	               {__pointWidth}
+	            }
+			},
+			series: [
+				<!-- BEGIN SERIES_SIN_NOM -->		
+				{			
+				    name:"{__point_name}" ,	
+				    color:"#{__serie_color}",	
+				    data: [
+						<!-- BEGIN POINT_SIN_NOM -->
+						{__point_value_sin_mon},
+						<!-- END POINT_SIN_NOM -->
+					]
+				}, 
+				<!-- END SERIES_SIN_NOM -->
+			]
+		});
+		{__leyenda_label}
+
+		leyenda(chart_disponibilidad_detallada_{__monitor_id}, ['leyenda_disponibilidad_detallada1_{__monitor_id}','leyenda_disponibilidad_detallada2_{__monitor_id}'], true, {__muestra_sla_ok}, {__muestra_sla_error}, false, 'barra', [chart_disponibilidad_detallada_{__monitor_id}, chart_disponibilidad_detallada_real_{__monitor_id}],'');
+	});
+
+</script>
+
+<div style="page-break-inside: avoid;">
+	<div style="display: {__tiene_titulo};">
+		<div class="txtNegro13" style="padding: 6px; border: solid 1px #ffffff;">{__item_orden}.{__monitor_orden}. {__monitor_nombre}</div>
+	</div>
+	<div id="disponibilidad_detallada_{__monitor_id}"></div>
+	<div id="disponibilidad_detallada_real_{__monitor_id}"></div>
+	<table align="center">
+		<tr>
+			<td  style="vertical-align:top; padding-top:10px" ><div id="leyenda_disponibilidad_detallada1_{__monitor_id}" style="width:{__ancho_leyenda1}px; padding-top:0px" ></div></td>
+			<td  style="vertical-align:top; padding-top:10px"><div  id="leyenda_disponibilidad_detallada2_{__monitor_id}" style="width:{__ancho_leyenda2}px; text-align:center; background-color:#F4F4F4"></div></td>
+		</tr>
+	</table>
+</div>
+<!-- END BLOQUE_MONITORES -->
+
+<script type="text/javascript">
+$(function() {
+
+	name = '{__name}';
+	// Ejecuta la inialización del acordeon.
+	if ('{__tiene_evento}' == 'true'){
+		createAccordion(name);	
+	}
+});
+</script>

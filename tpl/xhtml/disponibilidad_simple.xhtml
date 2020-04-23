@@ -1,0 +1,67 @@
+
+<script type="text/javascript" src="js/disponibilidad.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+	var disponibilidadConsolidada = new disponibilidad();
+	disponibilidadConsolidada.contenedor_div = 'contenedor_div_disponibilidad_simple_{__objetivo_id}';
+	disponibilidadConsolidada.contenedor = 'cuadroPrincipalDisponibildadSimple_{__objetivo_id}';
+	disponibilidadConsolidada.nombreGrafico = 'contenedorDisponibilidadSimple_{__objetivo_id}'
+	disponibilidadConsolidada.tipo = "simple";
+	disponibilidadConsolidada.asociar();
+	//VARIABLE QUE ALMACENA LOS PUNTOS A DIBUJAR
+	disponibilidadConsolidada.datos = {{__datos}};
+	
+	//Variable que toma los elementos asociados a los id de los objetivos y los enlaza de la siguiente forma
+	//[obj_id,["nombre Objetivo",padre,expandido, estado triangulo (rotado o no)]
+	disponibilidadConsolidada.resources = [<!-- BEGIN BLOQUE_RESOURCES -->
+    										["{__resource_id}",["{__resource_name}","{__resource_parent}",true,false]],
+   										   <!-- END BLOQUE_RESOURCES -->
+    									  ];
+	
+	//Usada para indicar el nivel asociado al objetivo (El nivel es la cantidad de antecesores que tiene)
+	disponibilidadConsolidada.grupos={<!-- BEGIN BLOQUE_GRUPOS -->
+										"{__grupo_id}":0,
+									  <!-- END BLOQUE_GRUPOS -->
+									  };
+
+	//el alto se determina por  la cantidad de objetivos-paso-monitor que existan y los múltiplica por 20 pixeles
+	disponibilidadConsolidada.alto=20;
+	disponibilidadConsolidada.altoTotal=disponibilidadConsolidada.alto;
+	
+
+
+	//modifica el alto por la cantidad de elementos a gráficar
+     document.getElementById('cuadroPrincipalDisponibildadSimple_{__objetivo_id}').setAttribute("height",disponibilidadConsolidada.alto);
+     document.getElementById('cuadroPrincipalDisponibildadSimple_2_{__objetivo_id}').setAttribute("height",disponibilidadConsolidada.alto);
+     disponibilidadConsolidada.fechaMayor=disponibilidadConsolidada.buscaFechaMayor();
+     disponibilidadConsolidada.fechaMenor=disponibilidadConsolidada.buscaFechaMenor();
+     disponibilidadConsolidada.segundosTotales = 172800;
+     diferenciaT = (disponibilidadConsolidada.diferenciaEntreFechas(disponibilidadConsolidada.fechaMenor, disponibilidadConsolidada.fechaMayor));
+     disponibilidadConsolidada.dias=(diferenciaT)/86400;
+     
+
+    //	disponibilidadConsolidada.diasCalendario = disponibilidadConsolidada.dias;
+     //LLAMADO A LA FUNCIÓN QUE DIBUJA EL EJE Y
+     disponibilidadConsolidada.creaEjeY(disponibilidadConsolidada.escala,true);
+   //  disponibilidadConsolidada.creaCalendario(disponibilidadConsolidada.escala);
+   //  disponibilidadConsolidada.creaEscalas();
+     
+     
+
+ 	
+});
+
+</script>
+<table width="100%">
+	<tr>
+		<td align="left" >
+		<div style="overflow-X:auto; width:719px;" id="contenedor_div_disponibilidad_simple_{__objetivo_id}"  >
+			<svg width="718px" id="cuadroPrincipalDisponibildadSimple_2_{__objetivo_id}"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >				
+				<rect x="0" y="0" height="100%"  width="100%" id="fondo"  fill="#FFFFFF"   ></rect>
+				<g id="cuadroPrincipalDisponibildadSimple_{__objetivo_id}"></g>
+			</svg>		
+		</div>
+		</td>
+	</tr>
+</table>

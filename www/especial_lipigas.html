@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="/tools/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/tools/fontawesome/js/fontawesome.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/toolscss/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/toolscss/fontawesome/css/all.min.css">
+</head>
+<body>
+	<div align="center">
+		<div style="display: inline-block; padding-right: 20px;">
+			<img src="img/especiales/lipigas_logo.png">
+		</div>
+		<div style="display: inline-block; padding: 0px 20px 0px 20px;">
+			<h2 style="color: #1c61b7; font-weight: bold;font-family: Roboto;font-size: xx-large;">
+				MONITOREO TRANSMISIÓN DE PEDIDO
+			</h2>
+		</div>
+		<div style="display: inline-block; padding-left: 20px;">
+			<img src="img/atentus_logo.png" style="height: 60px;">
+		</div>
+		<div id="timeNow"/>
+	</div>
+
+	<div align="center" style="padding-top: 3%;">
+		<div id="lipigas">
+			<div id="div_lipigas"></div>
+		</div>
+	</div>
+	
+
+	<audio id="alerta" style="display: inline;">
+        <source  src="audio/alert.wav">
+	</audio>
+
+
+	<script type="text/javascript">
+		url = window.location.href
+		var url = new URL(url)
+		var token = url.searchParams.get("token")
+		var objetivo = url.searchParams.get("objetivo")
+		var especialLipigas = function() {
+		var dateNowTime=new Date(Date.now())
+		const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+		var localTime=(dateNowTime.toLocaleTimeString('es-ES'))
+		dateNowTime=(dateNowTime.toLocaleDateString('es-ES', options))
+		if (document.getElementById("time")) {
+			document.getElementById("time").remove()
+		}
+		var divTime='<div id="time" style="width:66%;text-align:right;padding-left:41%">'+
+						'<div style="float:left">'+
+							'<i class="fas fa-clock fa-lg"></i>'+
+						'</div>'+
+						'<div>Ultima Actualización:  '+localTime+', '+dateNowTime+'</div>'+
+					'</div>'
+		$("#timeNow").append(divTime)
+			div_lipigas2 = document.createElement("div")
+			div_lipigas2.setAttribute("id", "div_lipigas")
+			div = document.getElementById("lipigas")
+			if (token == null && objetivo == null) {
+				table = '<table valign="top" width="400px" style="display: inline-block; padding-left: 25px; padding-right: 25px;">'+
+				'<tr>'+
+				'<td width="400px" height="80px" colspan="3" style="background-color: red; border-radius: 10px; text-align: center; color: white; font-weight: bold;">Debe ingresar token y objetivo asignados</td>'+
+				'</tr></table>'
+				$(div_lipigas2).append(table)
+				$(div).append(div_lipigas2)
+				return
+			}
+			if (token == null) {
+				table = '<table valign="top" width="400px" style="display: inline-block; padding-left: 25px; padding-right: 25px;">'+
+				'<tr>'+
+				'<td width="400px" height="80px" colspan="3" style="background-color: red; border-radius: 10px; text-align: center; color: white; font-weight: bold;">Debe ingresar token</td>'+
+				'</tr></table>'
+				$(div_lipigas2).append(table)
+				$(div).append(div_lipigas2)
+				return
+			}
+
+			if (objetivo == null) {
+				table = '<table valign="top" width="400px" style="display: inline-block; padding-left: 25px; padding-right: 25px;">'+
+				'<tr>'+
+				'<td width="400px" height="80px" colspan="3" style="background-color: red; border-radius: 10px; text-align: center; color: white; font-weight: bold;">Debe ingresar objetivo</td>'+
+				'</tr></table>'
+				$(div_lipigas2).append(table)
+				$(div).append(div_lipigas2)
+				return
+			}
+			$.ajax({
+				async: false,
+				type: 'POST',
+				url: 'utils/especial_lipigas.php',
+				data: {'objetivo': objetivo, 'token': token},
+				success: function(data) {
+					if (document.getElementById("div_lipigas")) {
+						document.getElementById("div_lipigas").remove()
+					}
+					div_lipigas2 = document.createElement("div")
+					div_lipigas2.setAttribute("id", "div_lipigas")
+					div = document.getElementById("lipigas")
+					vrunificada = JSON.parse(data)	
+					if (Object.entries(vrunificada).length == 0) {
+						table = '<table width="400px" style="display: inline-block; vertical-align: top; padding-left: 25px; padding-right: 25px;">'+
+						'<tr>'+
+						'<td width="400px" height="80px" colspan="3" style="background-color: red; border-radius: 10px; text-align: center; color: white; font-weight: bold;">Objetivo no asignado a este servicio</td>'+
+						'</tr></table>'
+						$(div_lipigas2).append(table)
+						$(div).append(div_lipigas2)
+						return
+					}
+
+					if (typeof(vrunificada) == "string") {
+						vrunificada = JSON.parse(vrunificada)	
+						table = '<table width="400px" style="display: inline-block; vertical-align: top; padding-left: 25px; padding-right: 25px;">'+
+						'<tr>'+
+						'<td width="400px" height="80px" colspan="3" style="background-color: red; border-radius: 10px; text-align: center; color: white; font-weight: bold;">'+vrunificada.error+'</td>'+
+						'</tr></table>'
+						$(div_lipigas2).append(table)
+						$(div).append(div_lipigas2)
+						return
+					}
+					$.each(vrunificada, function(index, objetivo){
+						jQuery(document).ready(function($) {
+						    $(".clickable-row").click(function() {
+						        window.open($(this).data("href"));
+						    });
+						});
+						if (Object.keys(objetivo).length == 3) {
+							table = '<table width="300px" style="display: inline-block; vertical-align: top; padding-left: 25px; padding-right: 25px;" id="'+objetivo.id_objetivo+'"">'+
+							'<tr class="clickable-row" data-href='+objetivo.link+'>'+
+							'<td width="300px" height="80px" colspan="3" style="background-color: '+objetivo.color+'; border-radius: 10px; text-align: center; color: white; font-weight: bold;">'+objetivo.nombre+'</td>'+
+							'</tr>'+
+							'<tr>'+
+							'<td>'+
+							'No se encuentran monitoreos para este intervalo'+
+							'</td>'+
+							'</tr>'
+						}else{
+							if (JSON.stringify(sessionStorage.getItem("primero")) == "null") {
+								if (objetivo.color == "#d42323"){
+									document.getElementById("alerta").play()
+									sessionStorage.setItem("primero", false)
+									sessionStorage.setItem(objetivo.id_objetivo, objetivo.color)
+								}
+							}else{
+								if (objetivo.color == "#3bb71c") {
+									sessionStorage.setItem(objetivo.id_objetivo, objetivo.color)
+								}
+								if (objetivo.color == "#d42323") {
+									if (sessionStorage.getItem(objetivo.id_objetivo) == "#3bb71c") {
+										document.getElementById("alerta").play()
+									}
+									sessionStorage.setItem(objetivo.id_objetivo, objetivo.color)
+								}
+							}
+							table = '<table width="300px" style="display: inline-block; vertical-align: top; padding-left: 25px; padding-right: 25px;" id="'+objetivo.id_objetivo+'">'+
+							'<tr style="cursor:pointer" class="clickable-row" data-href='+objetivo.link+':>'+
+							'<td width="300px" height="80px" colspan="3" style="background-color: '+objetivo.color+'; border-radius: 10px; text-align: center; color: white; -webkit-box-shadow: 6px 6px 0px 0px rgba(214,214,214,1); font-weight: bold;font-family: Roboto;font-size: x-large;">'+objetivo.nombre+'</td>'+
+							'</tr>'+
+							'<tr>'+
+							'<td height="10px"></td>'+
+							'</tr>'+
+							'<tr>'+
+							'<td style="text-align: center; padding-bottom: 7px; padding-top: 7px; "><i class="fas fa-cogs fa-lg"></i></td>'+
+							'<td style="text-align: center; padding-bottom: 7px; padding-top: 7px;"><i class="fas fa-tachometer-alt  fa-lg"></i></td>'+
+							'<td style="text-align: center; padding-bottom: 7px; padding-top: 7px;"><i class="fas fa-stopwatch fa-lg" style="color: #d42323;"></i></td>'+
+							'</tr>'+
+							'<tr style="background-color: #ffeccf;">'+
+							'<td style="padding: 3px 0px 3px 20px;font-family: Roboto;" colspan="2">Umbral definido</td>'+
+							'<td style="text-align: center;font-family: Roboto;font-weight: bold;">'+objetivo.umbral+' s</td>'+
+							'</tr>'
+							$.each(objetivo.pasos, function(indexpaso, paso){
+								table +=	'<tr>'+
+								'<td style="text-align: left; padding-bottom: 3px; padding-top: 3px; border-bottom: 5px solid #d2d2d2; width: 33%;font-family: Roboto;font-weight: bold;">'+paso.nombre_paso+'</td>'+
+								'<td style="text-align: -webkit-center; padding-bottom: 3px; padding-top: 3px;  border-bottom: 5px solid #d2d2d2; width: 33%;">'+
+								'<div class="square" style="height: 17px; width: 17px; border-radius: 3px; background-color: '+paso.estado+'; "></div>'+
+								'</td>'+
+								'<td style="text-align: -webkit-center; padding-bottom: 3px; padding-top: 3px;  border-bottom: 5px solid #d2d2d2; width: 33%;font-family: Roboto;font-weight: bold;">'+paso.tiempo_respuesta+' s</td>'+
+								'</tr>'
+							})
+						}
+						table += '<tr><td style="height: 25px;"></td></tr></table>'
+						$(div_lipigas2).append(table)
+						$(div).append(div_lipigas2)
+					})
+				},
+				error: function(error) {
+				}
+			})}
+			setInterval(especialLipigas, 300000)
+			especialLipigas()
+		</script>
+	</body>
+	</html>

@@ -1,0 +1,260 @@
+
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 600;
+}
+.celdanegra40 {
+	padding: 2px 2px 2px 2px;
+	background-color: #a2a2a2;
+	font-family: Verdana,Arial,Helvetica,sans-serif;
+	font-size: 12px;
+}
+
+.text{
+	font-family: Trebuchet MS, Verdana, sans-serif;
+	font-size: 12px;
+}
+
+
+</style>
+<!-- Resources -->
+<script type="text/javascript" src="tools/amcharts/amcharts.js"></script>
+<script type="text/javascript" src="tools/amcharts/serial.js"></script>
+
+
+
+<!-- HTML -->
+<div style="width: 1200;" id="chartdiv"></div>
+<table id ="myTable" style="width: 1000" align="center" cellpadding="2" cellspacing="2" border="1">
+</table>
+<br>
+{__leyenda}
+
+
+<script>
+	user = '{__user}'
+	objs=[]
+	<!-- BEGIN BLOQUE_OBJETIVOS2 -->
+		obj = '{__id_objetivo}'
+		objs += obj + ','
+		nombreObj = '{__nombre_objetivo}'
+	<!-- END BLOQUE_OBJETIVOS2 -->
+	objs=(objs.slice(0, -1))
+	paso = '{__paso_id}'
+	ini = '{__inicio}'
+	final = '{__termino}'
+	hash = '{__hash}'
+
+	objetives = []
+	steps = []
+	arrayObj=Array()
+	<!-- BEGIN BLOQUE_OBJETIVOS -->
+		arrayData=Array()
+		objetivo = ('{__objetivos_id}')
+		nombre_paso = ('{__nombre_paso}')
+		objetives+=objetivo+','
+		nombre_obj = '{__nombre_obj}'
+		uptime = parseFloat(('{__up}'))
+		downtime = parseFloat( '{__down}')
+		downtime_parcial = parseFloat('{__dp}')
+		no_mon = parseFloat('{__no}')
+		arrayData.push(objetivo, nombre_obj, uptime,downtime, downtime_parcial, nombre_paso)
+		arrayObj.push(arrayData)
+	<!-- END BLOQUE_OBJETIVOS -->
+	objetives=(objetives.slice(0, -1))
+	inicio = ('{__inicio}')
+	termino = ('{__termino}')
+	newData=''
+	$.ajax({
+		async: false,
+		type: "POST",
+		url: "utils/get_tiempo_respuesta_intervalo.php",
+		data: {'objetives':objetives,'step': '{__pasos}', 'inicio':inicio, 'termino':termino, 'user':user,'hash':hash },
+		success: function(data) {
+			data = JSON.parse(data)
+			function generateData() {
+	  			var datas = [];
+				$.each(data, function(x,evento){
+					if(arrayObj[x][0]==evento["objetivo_id"]){
+						tiempo_de_respuesta = (evento["tiempo_de_respuesta"])
+						nombre_obj = (arrayObj[x][1])
+						uptime = (arrayObj[x][2])
+						downtime = (arrayObj[x][3])
+						downtime_parcial = (arrayObj[x][4])
+						nombre_paso = arrayObj[x][5]
+						total = uptime+downtime+downtime_parcial
+						if(total==0){
+							up=0
+							down=0
+							dp=0
+						}else{
+							if(downtime != 0){
+								down = downtime*100/total
+							}else{
+								down = 0
+							}
+							if(uptime !=0 ){
+								up = uptime*100/total
+							}else{
+								up = 0
+							}
+							if(downtime_parcial !=0 ){
+								dp = downtime_parcial*100/total
+							}else{
+								dp = 0
+							}
+						}
+						uptimeTotal = up+dp
+
+						datas.push( {
+					      	"category": nombre_paso + " " + nombre_obj,
+					        "uptime": up,
+					        "downtime": down,
+					        "parcial": dp,
+					        "tiempo": tiempo_de_respuesta,
+					    } );
+					}
+				})
+				newData =datas;
+				return datas;
+			}
+			function barGenerate(){
+				if('{__pdf}'=='true'){
+					return {}
+				}else{
+					newarr=[]
+					newarr.push({
+						"graph": "g1",
+						"oppositeAxis": true,
+						"offset": 30,
+						"scrollbarHeight": 50,
+						"backgroundAlpha": 0,
+						"selectedBackgroundAlpha": 0.1,
+						"selectedBackgroundColor": "#888888",
+						"graphFillAlpha": 0,
+						"graphLineAlpha": 0.5,
+						"selectedGraphFillAlpha": 0,
+						"selectedGraphLineAlpha": 1,
+						"autoGridCount": true,
+						"color": "#AAAAAA"
+					})
+					return newarr[0]
+				}
+			}
+			var chart = AmCharts.makeChart("chartdiv", {
+
+			    "type": "serial",
+				"theme": "light",
+				"columnWidth": 0.4,
+				"valueAxes": [{
+					"stackType": "100%",
+				 	"id": "v1",
+				 	"title": "Disponibilidad (%)",
+				 	"position": "left",
+			        "labelFunction": function(value) {
+						      		return Math.round(value) + "%";
+					    		}
+			        }, {
+					"id": "v2",
+					"title": "Tiempo de Respuesta (Segs)",
+					"position": "right",
+
+
+			    }],
+			    //esto hace filtro
+				"chartScrollbar": barGenerate() ,
+				// esto hace linea paralela
+				"chartCursor": {
+				    "pan": true,
+					"valueLineEnabled": true,
+					"valueLineBalloonEnabled": true,
+					"cursorAlpha": 0,
+					"valueLineAlpha": 0.2
+				},
+				
+			    "legend": {
+			        "position": "top",
+					"useGraphSettings": true,
+			    },
+			    "categoryField": "category",
+			    "categoryAxis": {
+			        "gridAlpha": 0,
+			        "position": "left",
+			        "labelRotation": 30
+			    },
+			    "graphs": [{
+			    	"valueAxis": "v1",
+			        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+			        "fillAlphas": 0.95,
+			        "fillColors":"#54a51c",
+			        "labelText": "[[value]]",
+			        "lineAlpha": 0.2,
+			        "precision" : 2,
+			        "title": "Uptime",
+			        "type": "column",
+					"color": "#000000",
+			        "valueField": "uptime"
+			    }, {
+			    	"valueAxis": "v1",
+			        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+			        "fillAlphas": 0.95,
+			        "fillColors":"#d22129",
+			        "labelText": "[[value]]",
+			        "precision" : 2,
+			        "lineAlpha": 0.2,
+			        "title": "Downtime",
+			        "type": "column",
+					"color": "#000000",
+			        "valueField": "downtime"
+			    }, {
+			    	"valueAxis": "v1",
+			        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+			        "fillAlphas": 0.95,
+			        "labelText": "[[value]]",
+			        "fillColors":"#fdc72e",
+			        "lineAlpha": 0.3,
+			        "precision" : 2,
+			        "title": "Uptime Parcial",
+			        "type": "column",
+					"color": "#000000",
+			        "valueField": "parcial"
+			    }, {
+			        "bullet": "round",
+			        "valueAxis": "v2",
+					"bulletBorderAlpha": 1,
+					"bulletColor": "#FFFFFF",
+					"bulletSize": 5,
+					"hideBulletsCount": 50,
+					"lineThickness": 2,
+					"lineColor": "#20acd4",
+					"type": "smoothedLine",
+					"title": "Tiempo de Respuesta",
+					"useLineColorForBulletBorder": true,
+					"valueField": "tiempo",
+					"balloonText": "<b>[[title]]</b><span style='font-size:14px'>:[[value]]</span>"
+			    }],
+			    "dataProvider":generateData(),
+			});
+		}
+	})
+    var table = document.getElementById("myTable");
+    firts ='<tr><td class="celdanegra40"> Nombre Serie </td>		<td class="celdanegra40"> Tiempo Respuesta</td>		<td class="celdanegra40"> Uptime Total</td>		<td class="celdanegra40"> Uptime Global</td>		<td class="celdanegra40"> Uptime Parcial</td>		<td class="celdanegra40"> Downtime</td>	</tr>'
+    $('#myTable').append(firts)
+    $.each(newData, function(index, ele){
+
+    	if (index%2==0) {
+    		cell="celdaIteracion1"
+    	}else{
+    		cell ="celdaIteracion2"
+    	}
+    	tr = '<tr><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+ele["category"]+'</td>'
+    	tr +='<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" align="right" class='+cell+'>'+parseFloat(ele["tiempo"]).toFixed(2)+'[s]</td>'
+    	tr += '<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" align="right" class='+cell+'>'+parseFloat(ele["uptime"]+ele["parcial"]).toFixed(2)+'(%)</td>'
+    	tr +='<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" align="right" class='+cell+'>'+parseFloat(ele["uptime"]).toFixed(2)+'(%)</td>'
+    	tr += '<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" align="right" class='+cell+'>'+parseFloat(ele["parcial"]).toFixed(2)+'(%)</td>'
+    	tr += '<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" align="right" class='+cell+'>'+parseFloat(ele["downtime"]).toFixed(2)+'(%)</td></tr>'
+    	$('#myTable').append(tr)
+    })
+</script>

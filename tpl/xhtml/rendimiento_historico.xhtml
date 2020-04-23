@@ -1,0 +1,210 @@
+<script type="text/javascript">
+		
+	$(document).ready(function() {
+            var color_sla_ok='#5FB404';
+            var color_sla_error='#d22129';
+            var prueba = 'true';
+            var es_descarga_pdf = true;
+            if('{es_descarga}'=='true'){
+               es_descarga_pdf = false;
+            }
+		
+		<!-- BEGIN BLOQUE_GRAFICOS -->
+		var chart_rendimiento_historico_{__idHorario};
+		
+		chart_rendimiento_historico_{__idHorario} = new Highcharts.Chart({
+			exporting: { enabled: false},
+			credits : {
+			    enabled : false
+			},
+			height:300,
+			chart: {
+				renderTo: 'rendimiento_historico_horario_{__idHorario}', 
+				defaultSeriesType: 'line',
+				ignoreHiddenSeries : false,
+				zoomType: 'x',
+				height:300,
+				alignTicks: false,
+				marginRight:30,
+				marginTop:30,
+	            resetZoomButton: {
+	                theme: {
+	                    fill: 'white',
+	                    stroke: 'silver',
+	                    r: 0,
+	                    states: {
+	                        hover: {
+	                            fill: '#41739D',
+	                            style: {
+	                                color: 'white'
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+			},
+			title: {
+//				useHTML: true,
+//				enabled:{__tieneTitulo},
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold' },
+				text: '{__nombreHorario}'
+			},
+			xAxis: {
+				lineColor: '#c0c0c0',
+				type: 'datetime',
+				minorGridLineColor: '#E0E0E0',
+				showFirstLabel:true,
+				showLastLabel:true,
+				gridLineWidth: 0.3,
+		        labels: {
+		        	formatter: function() {
+		                return Highcharts.dateFormat('%d %b %y', this.value);
+		           }				            
+		        },		
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Período',
+					useHTML:true,
+				},
+			},
+			yAxis: {
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Tiempo de Respuesta [s]'
+				},
+				labels: {
+					formatter: function() {
+						if(this.value % 1 != 0)
+							return this.value.toFixed(2);
+						else
+							return this.value;
+						},
+				},
+						
+				gridLineWidth: 0.3,
+				min:0,
+				lineWidth:1,
+				<!-- BEGIN TIENE_MAXIMO -->
+		        tickPositioner: function(min, max) {
+		            var pos,
+		                tickPositions = [],
+		                tickStart = 0;				            
+		            for (pos = tickStart; pos <= {__y_scale_maximum}; pos += ({__y_scale_maximum}/3)) {
+		                tickPositions.push(pos);
+		            }
+		            return tickPositions;				              
+		        },
+		        <!-- END TIENE_MAXIMO -->
+				        
+				lineColor: '#c0c0c0',
+				plotLines: [					                
+					<!-- BEGIN TIENE_SLA_OK -->
+					{
+						color: color_sla_ok,
+						width: 2,
+						value: {__sla_ok_value}
+					},
+					{	color: color_sla_ok,
+						width: 2,
+						value: parseFloat({__sla_ok_value}),								
+						label: {
+		                    text: parseFloat({__sla_ok_value}),
+		                    style:{
+		                    	color:'#54a51c',
+		                    	'font-size':11
+		                    },
+		                    align: 'right',
+		                    x: 30,
+		                    y:10,
+		                },
+					},
+					<!-- END TIENE_SLA_OK -->            
+					<!-- BEGIN TIENE_SLA_ERROR -->            
+					{
+						color: color_sla_error,
+						width: 2,
+						zindex:3,
+						value: {__sla_error_value}
+					},
+					{
+						color: color_sla_error ,
+						width: 2,
+						value: {__sla_error_value},
+						label: {
+		                    text: {__sla_error_value},
+		                    style:{
+		                    	color:'#D22129',
+		                    	'font-size':11,
+		                    },
+		                    align: 'right',
+		                    x: 30
+		                },
+					}
+			    	<!-- END TIENE_SLA_ERROR --> 
+			    ],
+			},
+			tooltip: {
+				style: { fontSize: '11px' },
+				backgroundColor:'rgba(255,255,255,1)',
+				formatter: function() {
+					return '<b>'+this.series.name+'</b><br/>'+
+					       '<b>Fecha :</b> '+Highcharts.dateFormat('%d/%b/%Y %H:%M', this.x)+'<br/>'+
+					       '<b>Tiempo de Respuesta :</b> '+Highcharts.numberFormat(this.y,2,',')+' [s]';
+				},
+			},
+
+			legend: {
+				enabled:false,
+			},
+	        plotOptions: {
+	            series: {
+                        enableMouseTracking: es_descarga_pdf,
+	                animation: false
+	            }
+	        },
+	        series: [
+		        <!-- BEGIN SERIES_ELEMENT -->
+				{
+					name: '{__series_name}',
+					color: '#{__series_color}',
+					connectNulls:false,
+			        marker: {
+	        	        enabled: true,
+	        	        symbol: 'circle'
+		            },							           																		
+					data:[
+						<!-- BEGIN POINT_ELEMENT -->							
+						[Date.UTC({__point_name}),{__point_value}],
+						<!-- END POINT_ELEMENT -->
+				    ],
+				    pointInterval: 24 * 3600 * 1000* 30
+				},
+				<!-- END SERIES_ELEMENT -->                    
+			]
+		});
+		<!-- END BLOQUE_GRAFICOS -->
+
+		//ADAPTAR LEYENDA 
+		leyenda(chart_rendimiento_historico_{__idHorario}, ['leyenda_rendimiento_historico1','leyenda_rendimiento_historico2' ], true, true, true, false, 'linea',
+				[
+					<!-- BEGIN BLOQUE_LEYENDA -->
+					chart_rendimiento_historico_{__idHorario},
+					<!-- END BLOQUE_LEYENDA -->
+				],
+		'Pasos');		
+	});
+			
+</script>
+
+<div style="page-break-inside: avoid;">
+	<!-- BEGIN BLOQUE_CONTENEDORES -->		
+	<div id="rendimiento_historico_horario_{__idHorario}"></div>
+	<!-- END BLOQUE_CONTENEDORES -->	
+
+	<table align="center">
+		<tr>
+			<td style="vertical-align:top"><div id="leyenda_rendimiento_historico1" style="width:450px"></div></td>
+			<td style="vertical-align:top"><div id="leyenda_rendimiento_historico2" style="width:150px"></div></td>
+		</tr>
+	</table>
+</div>

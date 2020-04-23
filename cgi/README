@@ -1,0 +1,108 @@
+El sistema de Herramientas Remotas
+==================================
+
+Este sistema esta construido en dos o tres capas.  La capa mas superior es el
+CGI que se encarga de todo el procesamiento de parametros desde HTTP,
+despliegue del formulario, etc.  La segunda capa consiste en paquetes o
+modulos, que son clases que implementan los metodos que distinguen a cada
+herramienta.  La posible tercera capa es un modulo con rutinas comunes que
+todas las herramientas usan.
+
+Las clases de las herramientas deben implementar los siguientes metodos
+(ademas del metodo new() que es el constructor, el cual no recibe ningun
+parametro):
+
+tabla(): entrega el nombre de la tabla de donde la herramienta obtiene la
+configuracion sobre si el usuario tiene o no acceso a la herramienta.
+
+tituloCorto(): entrega el titulo breve de la herramienta, para despliegue
+HTML.
+
+tituloLargo(): entrega el titulo detallado de la herramienta, para despliegue
+HTML.
+
+descripcion(): entrega un trozo de texto que describe el objetivo de la
+herramienta.
+
+setServidores(): define el conjunto de servidores sobre los cuales la
+herramienta debe operar.  Esto debe entregarse como un arreglo de hashes, cada
+uno de los cuales debe tener los campos id, nombre, cdescrip y ldescrip.
+
+setDestino(): define el destino sobre el cual debe operar la herramienta.
+
+ejecutar(): lleva a cabo la operacion de la herramienta, lo cual debe retornar
+un trozo de HTML con los resultados de la ejecucion.  Este trozo de HTML debe
+llevar todos los encabezados necesarios para dividir los resultados de la
+ejecucion en cada servidor, etc.
+
+
+
+Adicionalmente, la implementacion actual de las herramientas utiliza un modulo
+de funcionalidad comun entre todas, de manera de simplificar el codigo de cada
+una.  Actualmente este modulo entrega tres rutinas:
+
+wrap(): toma un trozo de codigo (una rutina anonima) y la ejecuta.  Todo
+aquello que ese trozo de codigo tire a la salida estandar (es decir, todo
+aquello que se genere con print) es capturado en una variable, y se devuelve.
+Esto es util por ej. para ejecutar programas externos y capturar su salida.
+
+ejecutar(): Esto encierra todo el loop en el arreglo de servidores, en el cual
+se ejecuta la herramienta para cada uno.  Para cada paso de este loop se
+ejecuta el metodo execTool(), 
+
+execTool(): Esto invoca a un programa wrapper, especificado por la
+herramienta, para un servidor en particular, y retorna un string con todo
+aquello que ese ejecutable escribe a su salida estandar, usando la rutina
+wrap().
+
+
+
+Para poder utilizar este modulo comun, cada herramienta debe proveer los
+siguientes metodos:
+
+getExecutable(): debe retornar el nombre del ejecutable que se usara en
+execTool().
+
+params(): debe retornar los parametros que se le deben pasar al ejecutable
+_ademas_ del parametro --origen, que todas los ejecutables deben recibir (este
+es el nombre del servidor desde el cual se ejecuta la herramienta en esa
+iteracion)
+
+filtro(): recibe la salida del ejecutable, y la procesa de manera de entregar
+lo que se desea desplegar al usuario.  Por ejemplo puede servir para poner
+lineas de titulos, para marcar con color destacado un trozo de texto que
+se�ala un error, o en casos mas drasticos para convertir completamente un
+bloque de texto en otro (por ej. para convertir el XML que retorna el pagina
+completa en el HTML de la tabla que se entrega al usuario).
+
+Aquella herramienta que quiera usar el modulo comun debe tener en su metodo
+ejecutar() lo siguiente:
+return Comun::ejecutar(@_)
+(obviamente tienen que hacer "use Comun" al principio)
+
+
+Con respecto a los programas wrappers, estos son programas en C cuya principal
+caracteristica es hacer setuid("monitor"), de manera que se pueda conectar con
+SSH a los monitores sin pedir password.  A partir de ahi la mayoria de los
+programas simplemente invoca SSH para ejecutar un comando simple y recibir la
+salida de ese comando directamente.  Sin embargo, por ej. en el caso de pagina
+completa es mas complejo porque la herramienta genera un archivo, y por lo
+tanto el programa debe hacer fork() para ejecutar el SSH que genera el
+archivo, y obtener el nombre de archivo; luego hacer fork() nuevamente para
+traerse ese archivo y escribir su contenido en la salida estandar; y
+finalmente ejecutar SSH para eliminar el archivo del host remoto.  Por lo
+tanto se puede ver que los programas pueden ser tan complejos como sea
+necesario.  En cualquier caso gran parte del codigo de los programas se
+repite, por lo que en la practica no es dificil generar nuevos programas.
+
+Los archivos ejecutables deben estar con los siguientes usuarios, grupos y permisos:
+
+-rwsr-xr-x    1 monitor  monitor      10097 may 18 15:24 doDig*
+-rwsr-xr-x    1 monitor  monitor      15552 may 18 15:24 doFull*
+-rwsr-xr-x    1 monitor  monitor      10130 may 18 15:24 doPing*
+-rwsr-xr-x    1 monitor  monitor      10147 may 18 15:24 doTrace*
+
+Para esto, se deb ejecutar:
+
+chown monitor.monitor <ARCHIVO>
+chmod u+s <ARCHIVO>

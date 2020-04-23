@@ -1,0 +1,200 @@
+<link rel="stylesheet" href="tools/jquery/css/jquery-ui-css/jquery-ui-1.10.min.css"></link>
+<script type="text/javascript" src="tools/jquery/js/jquery-ui-1.10.min.js"></script>
+<script type="text/javascript">
+			var chart_disponibilidad_historica;
+			$(document).ready(function() {
+                            var color_sla_ok='#5FB404';
+                            var color_sla_error='#d22129';
+				chart_disponibilidad_historica = new Highcharts.Chart({//GRAFICO 1
+					exporting: { enabled: false},
+					credits : {
+					    enabled : false
+					},
+					
+					chart: {
+						height:300,
+						renderTo: 'disponibilidad_historica',
+						type: 'column',
+						zoomType: 'y',
+						marginRight:30,
+			            resetZoomButton: {
+			                theme: {
+			                    fill: 'white',
+			                    stroke: 'silver',
+			                    r: 0,
+			                    states: {
+			                        hover: {
+			                            fill: '#41739D',
+			                            style: {
+			                                color: 'white'
+			                            }
+			                        }
+			                    }
+			                }
+			            }
+					},
+					title: {
+						style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold', fontFamily:'Verdana, Arial, Helvetica, sans-serif' },
+						text: ''
+					},
+					xAxis: [{
+						lineColor: '#c0c0c0',
+						gridLineWidth: 0.3,
+	                    
+						title: {
+							style: { color: '#5A5A5A', fontSize: '12px', fontWeight: 'bold', fontFamly:'Verdana, Arial, Helvetica, sans-serif' },
+							text: 'Período'
+						},
+						labels:{
+							useHTML:true,
+							formatter: function(){
+			                	return {__label}
+							}
+						},
+						categories: [
+							<!-- BEGIN SERIES_NAME -->
+							"{__series_name}",
+							<!-- END SERIES_NAME -->	             
+					    ]
+					}],
+					yAxis: [{
+						lineColor: '#c0c0c0',
+						gridLineWidth: 0.3,
+						lineWidth: 1,
+						minRange:6,
+						min: 0,
+						max:100,
+						labels: {
+							formatter: function() {
+								return Highcharts.numberFormat(this.value, 0);
+							},
+							
+						},
+						title: {
+							style: { color: '#5A5A5A' },
+							text: 'Disponibilidad [%]',
+						},
+						plotLines: [					                
+							<!-- BEGIN TIENE_SLA_OK -->
+							{
+								color: color_sla_ok,
+								width: 2,
+				                zIndex: 3,
+								value: parseFloat({__sla_ok_value})
+							},
+							{	color: color_sla_ok,
+								width: 2,
+								value: parseFloat({__sla_ok_value}),								
+								label: {
+				                    text: parseFloat({__sla_ok_value}),
+				                    style:{
+				                    	color:'#54a51c',
+				                    	'font-size':11
+				                    },
+				                    align: 'right',
+				                    x: 30
+				                },
+							},
+							<!-- END TIENE_SLA_OK -->            
+							<!-- BEGIN TIENE_SLA_ERROR -->            
+							{
+								color: color_sla_error,
+								width: 2,
+								zindex:3,
+								value: {__sla_error_value}
+							},
+							{
+								color: color_sla_error,
+								width: 2,
+								value: {__sla_error_value},
+								label: {
+				                    text: {__sla_error_value},
+				                    
+				                    style:{
+				                    	color:'#D22129',
+				                    	'font-size':11,
+				                    },
+				                    align: 'right',
+				                    y:10,
+				                    x: 30
+				                },
+							}
+					    	<!-- END TIENE_SLA_ERROR --> 
+					    ],
+						stackLabels: {
+							enabled: false,
+							style: {
+								fontWeight: 'bold',
+							}
+						}						
+					}],
+					tooltip: {
+                                                followPointer:true,
+						style: { fontSize: '11px',
+							},
+							backgroundColor:'rgba(255,255,255,1)',
+						formatter: function() {
+							return '<b>'+this.x+'</b><br/>'
+								   +'<b>'+this.series.name+' :</b> ' + Highcharts.numberFormat(this.y, 2) + ' %';
+						},
+					},
+					legend: {
+						enabled:false
+					},
+					plotOptions: {
+						column: {
+							stacking: 'normal',
+							dataLabels: {
+								enabled: false,
+							}
+					
+						},				        
+				    series: {
+				               animation: false,
+				               shadow:false,
+				               borderWidth:0,
+				               {__pointWidth}
+				            }
+				        
+					},
+					series: [
+						<!-- BEGIN SERIES_ELEMENT -->		
+						{			
+						    name:"{__point_name}" ,	
+						    color:"#{__serie_color}",	
+						    data: [
+								<!-- BEGIN POINT_ELEMENT -->
+								{__point_value},
+								<!-- END POINT_ELEMENT -->
+							]
+						}, 
+
+						<!-- END SERIES_ELEMENT -->
+				    ]
+				});
+				
+				{__leyenda_label}				
+				leyenda(chart_disponibilidad_historica, ['leyenda_disponibilidad_historica2','leyenda_disponibilidad_historica2'], true, {__muestra_sla_ok}, {__muestra_sla_error},false,'barra',[chart_disponibilidad_historica],'');
+			});
+
+	</script>
+</head>
+
+<div style="page-break-inside: avoid;">
+	<div id="disponibilidad_historica"></div>
+	<table align="center">
+		<tr>
+			<td style="vertical-align: top;"><div id="leyenda_disponibilidad_historica1" style="width:{__ancho_leyenda1}px;"></div></td>
+			<td style="vertical-align: top;"><div id="leyenda_disponibilidad_historica2" style="width:{__ancho_leyenda2}px; background-color:#F4F4F4"></div></td>
+		</tr>
+	</table>
+</div>
+<script type="text/javascript">
+$(function() {
+// Ejecuta la inialización del acordeon.
+if ('{__tiene_evento}' == 'true'){
+	$('#man').show();
+	createAccordion('{__name}');	
+}
+});
+</script>

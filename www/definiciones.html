@@ -1,0 +1,153 @@
+<html>
+	<head>
+		<title>Atentus.com: Reportes</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<link rel="stylesheet" href="css/textos-reporte.css" type="text/css"/>
+		<link rel="stylesheet" href="css/especiales.css" type="text/css"/>
+                  <script type="text/javascript">
+                           function cerrarPopupItem() {
+                                window.close();
+                           }  
+                  </script>
+                  </head>
+	
+	<body class="nihilo">
+		<table width="755" bgcolor="#ffffff" align="center">
+		<tr>
+		<td>
+		<table width="100%">
+			<tr>
+				<td class="tituloitem">Definiciones y Preguntas Frecuentes</td>
+				<td class="tituloitem" width="5%" align="center">
+                                    <a href="#" onclick="cerrarPopupItem();"><i class="spriteButton spriteButton-cerrar_popup"></i></a>
+				</td>
+			</tr>
+		</table>
+		<table width="100%">
+			<tr>
+				<td class="contenidoitem" colspan="100%" style="border-bottom: solid 1px #626262; padding-top: 12px;">
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Alerta</th>
+						</tr>
+						<tr>
+							<td>Es el mensaje (E-mail) enviado al usuario cuando alg&uacute;n objetivo cambia de estado.</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Consolidado</th>
+						</tr>
+						<tr>
+							<td>Es la uni&oacute;n de la informaci&oacute;n obtenida desde todos los ISP donde se monitorea un objetivo, para un mismo intervalo de tiempo.</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Contacto</th>
+						</tr>
+						<tr>
+							<td>Es el destinatario de un mensaje de alerta.</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Estados Sem&aacute;foro</th>
+						</tr>
+						<tr>
+							<td>
+								<b>Ok Sin Eventos:</b> Es identificado por el color verde <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-verde"></i>. El objetivo actualmente esta uptime y sin eventos downtime durante todo en el per&iacute;odo.<br><br>
+								<b>Ok Con Eventos:</b> Es identificado por el color amarillo <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-amarillo"></i>. El objetivo actualmente esta uptime pero con eventos downtime durante parte del per&iacute;odo.<br><br>
+								<b>Error:</b> Es identificado por el color rojo <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-rojo"></i>. El objetivo actualmente esta en downtime.<br><br>
+								<b>No Monitoreado:</b> Es identificado por el color blanco <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-blanco"></i>. El objetivo actualmente no se esta monitoreando desde el ISP.<br><br>
+								<b>Sin Informaci&oacute;n:</b> Es identificado por el color blanco <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-blanco"></i>. No se ha recibido nueva informaci&oacute;n del objetivo desde el ISP.
+							</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Estados Disponibilidad</th>
+						</tr>
+						<tr>
+							<td>
+								<b>Uptime:</b> Es identificado por el color verde <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-verde"></i>. Se produce cuando las respuestas del objetivo, desde todos los ISP coincidentemente, son las esperadas.<br><br>
+								<b>Downtime Parcial:</b> Es identificado por el color amarillo <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-amarillo"></i>. Se produce cuando la respuesta de al menos un ISP, pero no de todos, no son las esperadas.<br><br>
+								<b>Downtime Global:</b> Es identificado por el color rojo <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-rojo"></i>. Se produce cuando las respuestas del objetivo, desde todos los IPS coincidentemente, no son los esperados.<br><br>
+								<b>No Monitoreado:</b> Es identificado por el color blanco <i style="margin-bottom: -2px;" class="spriteSemaforo spriteSemaforo-blanco"></i>. Se produce cuando no se puede realizar el monitoreo del objetivo, debido a razones externas.
+							</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Evento</th>
+						</tr>
+						<tr>
+							<td>
+								Es el resultado del monitoreo, y se divide en dos partes.<br><br>
+								<b>C&oacute;digo:</b> Es el resultado obtenido al intentar ejecutar el objetivo.<br><br>
+								<b>Tiempo de respuesta:</b> Es la cantidad de segundos que se demor&oacute; en completarse la ejecuci&oacute;n del objetivo.
+							</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>ISP</th>
+						</tr>
+						<tr>
+							<td>Es la estaci&oacute;n de monitoreo desde donde se ejecutan los objetivos.</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Registro</th>
+						</tr>
+						<tr>
+							<td>Es la informaci&oacute;n que contiene un servidor DNS sobre alg&uacute;n IP o dominio.</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>SLA</th>
+						</tr>
+						<tr>
+							<td>
+								<b>SLA Ok:</b> Si los tiempos de respuesta o el uptime de un monitoreo supera este valor entonces se considera que el monitoreo fue &oacute;ptimo.<br><br>
+								<b>SLA Error:</b> Si los tiempos de respuesta o el uptime de un monitoreo es menor que este valor entonces se considera que el monitoreo fue deficiente. 
+							</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Subcliente</th>
+						</tr>
+						<tr>
+							<td>Un subcliente es una agrupaci&oacute;n de usuarios y objetivos que permite la organizaci&oacute;n de estos en forma eficiente.</td>
+						</tr>
+					</table>
+					<br>
+					<table width="100%" class="definicion">
+						<tr>
+							<th>Umbral</th>
+						</tr>
+						<tr>
+							<td>Es el tiempo de respuesta que se debe obtener de un monitoreo para enviar una alerta.</td>
+						</tr>
+					</table>
+					<br>
+				</td>
+			</tr>
+		</table>
+		</td>
+		</tr>
+		</table>		
+	</body>
+</html> 

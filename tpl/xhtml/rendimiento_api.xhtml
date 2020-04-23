@@ -1,0 +1,330 @@
+<link rel="stylesheet" href="tools/jquery/css/jquery-ui-css/jquery-ui-1.10.min.css"></link>
+<script type="text/javascript" src="tools/jquery/js/jquery-ui-1.10.min.js"></script>
+<script>
+
+//RESCATA TOKEN Y OBJETIVOS DE PHP
+
+var dato = '{__token}';
+var objetive = '{__objetive}';
+
+//SETEA FECHA Y HORA PARA REALIZAR CONSULTA AJAX
+var fecha_inicial = new Date();
+var dif = fecha_inicial.getTimezoneOffset();
+var dif_hour = dif/60;
+var year = fecha_inicial.getFullYear();
+var month = fecha_inicial.getMonth()+1;
+if(month<10){
+	month ="0"+month
+}
+var day = fecha_inicial.getDate();
+if(day<10){
+	day ="0"+day
+}
+var hour_ini = "0"+0;
+var minute_ini = 00;
+
+if(minute_ini<10){
+	minute_ini="0"+minute_ini;
+}
+var hour_ter = fecha_inicial.getHours()+dif_hour;
+var minute_ter = fecha_inicial.getMinutes();
+var date1= year+"-"+month+"-"+day+" "+hour_ini+":"+minute_ini;
+var date2= year+"-"+month+"-"+day+" "+hour_ter+":"+minute_ter;
+//console.log(dato+"    "+objetive+"        "+date1+"     "+date2);
+
+//FUNCION DE AJAX Y GRAFICO
+var chart_rendimiento_consolidado;
+$(document).ready(function() {
+	$.ajax({
+		async: false,
+		type: "POST",
+		url: "utils/get_tiempo.php",
+		data: {'datos': dato, objetive, date1, date2},
+		success: function(data) {
+			var data = data;
+			//console.log(data);
+			var json = JSON.parse(data);
+			var serie;
+			var es_descarga_pdf= true;
+            var color_sla_ok='#5FB404';
+            var color_sla_error='#d22129';
+            var color_plot_bands = 'rgba(167, 121, 224,0.6)';
+            
+            if('{es_descarga}'=='true'){
+               es_descarga_pdf = false;
+               color_plot_bands = '#a779e0';
+            }
+			
+			chart_ = {
+				exporting: { enabled: false},
+				credits : {
+			    enabled : false
+				},
+				height:300,
+				chart: {
+					renderTo: 'rendimiento_consolidado',
+					defaultSeriesType: 'line',
+					zoomType: 'x',
+					height:300,
+	                ignoreHiddenSeries : false,
+					alignTicks: false,
+					marginRight:30,
+					marginTop:20,
+		            resetZoomButton: {
+		                theme: {
+		                    fill: 'white',
+		                    stroke: 'silver',
+		                    r: 0,
+		                    states: {
+		                        hover: {
+		                            fill: '#41739D',
+		                            style: {
+		                                color: 'white'
+		                            },
+		                        }
+		                    }
+		                }
+		            }
+				},
+
+				title: {
+					enabled:false,
+					style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold' },
+					text: ''
+				},
+				xAxis: {
+					lineColor: '#c0c0c0',
+					type: 'datetime',
+					minorGridLineColor: '#E0E0E0',
+				    minorTickLength: 0,
+				    gridLineWidth: 0.3,
+				    showFirstLabel:true,
+			        dateTimeLabelFormats: {
+			            second: '%l:%M:%S%P',
+			            minute: '%l:%M%P',
+			            hour: '%H:%M',
+			            day: "<br/><b>%e/%b</b>",
+			            week: '%e. %b',
+			            month: '%b %y',
+			            year: '%Y'
+			        },
+			        labels: {
+						useHTML: true,
+			        },
+					title: {
+						style: { color: '#5A5A5A' },
+						text: 'Período',
+						useHTML:true,
+					},
+					plotBands: [
+						]
+				},
+				yAxis: {
+					title: {
+						style: { color: '#5A5A5A' },
+						text: 'Tiempo de Respuesta [s]'
+					},
+					labels: {
+						formatter: function() {
+							if(this.value % 1 != 0)
+								return this.value.toFixed(2);
+							else
+								return this.value;
+							},
+					},
+					gridLineWidth: 0.3,
+					min:0,
+					lineWidth:1,
+					<!-- BEGIN TIENE_MAXIMO -->
+			        tickPositioner: function(min, max) {
+			            var pos,
+			                tickPositions = [],
+			                tickStart = 0;
+			            for (pos = tickStart; pos <= {__y_scale_maximum}; pos += ({__y_scale_maximum}/3)) {
+			                tickPositions.push(pos);
+			            }
+			            return tickPositions;
+			        },
+			        <!-- END TIENE_MAXIMO -->
+					lineColor: '#c0c0c0',
+					plotLines: [
+						<!-- BEGIN TIENE_SLA_OK -->
+						{
+							color: color_sla_ok,
+							width: 2,
+							value: {__sla_ok_value}
+						},
+						{
+							color: color_sla_ok,
+							width: 2,
+							value: parseFloat({__sla_ok_value}),
+							label: {
+			                    text: parseFloat({__sla_ok_value}),
+			                    style:{
+									color:'#54a51c',
+									'font-size':11
+			                    },
+			                    align: 'right',
+			                    x: 30,
+			                    y:10,
+			                },
+						},
+						<!-- END TIENE_SLA_OK -->
+						<!-- BEGIN TIENE_SLA_ERROR -->
+						{
+							color: color_sla_error,
+							width: 2,
+							zindex:3,
+							value: {__sla_error_value}
+						},
+						{
+							color: color_sla_error,
+							width: 2,
+							value: {__sla_error_value},
+							label: {
+			                    text: {__sla_error_value},
+			                    style:{
+									color:'#D22129',
+									'font-size':11,
+			                    },
+			                    align: 'right',
+			                    x: 30
+			                },
+						}
+						<!-- END TIENE_SLA_ERROR -->
+						],
+				},
+				tooltip: {
+					style: { fontSize: '11px' },
+					backgroundColor:'rgba(255,255,255,1)',
+					formatter: function() {
+						return '<b>'+this.series.name+'</b><br/>'+
+						       '<b>Fecha :</b> '+Highcharts.dateFormat('%d/%b/%Y %H:%M', this.x)+'<br/>'+
+						       '<b>Tiempo de Respuesta :</b> '+Highcharts.numberFormat(this.y,2,',')+' [s]';
+					},
+				},
+
+				legend: {
+					enabled:false,
+				},
+		        plotOptions: {
+		            series: {
+	                        animation: true,
+	                        enableMouseTracking: es_descarga_pdf
+	                    },
+		            line: {
+		            	connectNulls: false,
+						marker: {
+							enabled: false
+						}
+					}
+		        },
+		        series: [],
+			};
+
+			var cont=0;
+			$.each(json['pasos'],function(index,values){
+				var orden = values.orden;
+				cont++;
+
+				var series = {
+					data: []
+				};
+				var verde ="#AAD5D2";
+				var verde_os="#629693";
+				var morado ="#914988";
+				var azul = "#083F6D";
+				var negro = "#000000";
+				series.name=values.nombre;
+				if(cont==0){
+					series.color=verde;
+				}
+				if(cont==1){
+					series.color=azul;
+				}
+				if(cont==2){
+					series.color=verde_os;
+				}if(cont==3){
+					series.color=morado;
+				}
+				if(cont==4){
+					series.color=negro;
+				}
+				if(cont!=4&&cont!=3&&cont!=2&&cont!=1&&cont!=0){
+					series.color=verde;
+				}
+				series.connectNulls=false;
+
+				$.each (json['detalle'], function(i,detalle_values){
+					var paso_orden = detalle_values['@paso_orden'];
+					if(paso_orden==orden){
+						$.each(detalle_values.datos.dato,function(i,j){
+					
+							var arreglo =[];
+							var respuesta =j['@respuesta'];
+							if(respuesta == "S/I"){
+								respuesta = "0";
+							}
+							var fecha =j['@fecha'];
+							var separa = fecha.split(/[-:"T"]/);
+							var ano = separa[0];
+							var mes = separa[1];
+							var dia = separa[2];
+							var hora = separa[3];
+							var minuto = separa[4];
+							var seg = separa[5];
+							respuesta = parseFloat(respuesta);
+							if (respuesta == 0){
+								respuesta = null;
+							}
+							arreglo=[Date.UTC(ano,(mes-1),dia,hora,minuto,seg),respuesta]
+							series.data.push(arreglo);
+						});
+					}
+
+				});
+				chart_.series.push(series);
+			});
+			chart_rendimiento_consolidado = new Highcharts.Chart(chart_);
+		}
+	});
+leyenda(chart_rendimiento_consolidado, ['leyenda1rencon','leyenda2rencon'], true, true, true, false, 'linea', [chart_rendimiento_consolidado], 'Pasos');
+});
+
+//FUNCION AJAX QUE REALIZA COMPARACION DE ULTIMO REGISTRO
+var primero =true;
+var fecha_ajax
+function getTimeAjax(){
+	$.ajax({
+		async: false,
+		type: "POST",
+		url: "utils/get_LastDate_api.php",
+		data: {'datos2': dato, objetive},
+		success: function(data2) {
+			if(primero ==true){
+				fecha_ajax = data2;
+				primero = false;
+				getTimeAjax();
+			}else{
+				if(fecha_ajax!=data2){
+					location.reload(true);
+				}else{
+					//console.log('son iguales');
+				}
+			}
+		}
+	});
+}
+//FUNCION QUE LLAMA A AJAX CADA CIERTO TIEMPO
+setInterval(getTimeAjax, 300000);
+
+</script>
+<div style="page-break-inside: avoid;">
+	<div id="rendimiento_consolidado"></div>
+	<table align="center">
+		<tr>
+			<td style="vertical-align:top"><div style="width:450px" id="leyenda1rencon"></div></td>
+			<td style="vertical-align:top"><div style="width:150px" id="leyenda2rencon"></div></td>
+		</tr>
+	</table>
+</div>

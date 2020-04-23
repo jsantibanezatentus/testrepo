@@ -1,0 +1,266 @@
+<link rel="stylesheet" href="/css/estadisticas_elementos_plus.css" type="text/css" ></link>
+<script type="text/javascript" src="tools/jquery/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/elementos_plus.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    var elementoPlus = new elementosPlus('{__id}');
+    var count = 0;
+    elementoPlus.nombreGrafico = '{__id}';
+    <!-- BEGIN BLOQUE_VARIABLES -->
+    elementoPlus.datos=[
+                    <!-- BEGIN BLOQUE_DATOS -->
+
+                    ['{__elementos}','{__ip}','{__espera}','{__latencia}','{__descarga}','{__dns}','{__tamanoBody}','{__tamanoHeader}','{__contentType}','{__estado}','{__es_ok}','{__nombre_estado}'],
+
+                    <!-- END BLOQUE_DATOS -->
+    ];
+    elementoPlus.alto = parseFloat(elementoPlus.datos.length+1)*20;
+    elementoPlus.tiempoTotal='{__tiempoTotal}';
+
+    <!-- END BLOQUE_VARIABLES -->
+    try {
+        if(document.getElementById("download").value){
+            if( document.getElementById("download").value=='true'){
+                buildCsv(elementoPlus.datos, {__objetivoId}, '{__objetivoNombre}', '{__servicio}', '{__fecha}', '{__tiempoTotal}');
+            }
+        }
+    }
+    catch(err) {}
+    if(elementoPlus.datos.length != 0){
+        elementoPlus.asociar();
+        elementoPlus.creaGraficos();
+    }
+    else{
+        elementoPlus.noData('{__id}');
+    }
+    });
+    var modal = new modal();
+    modal.cerrarAyuda();
+    modal.cerrarElemento();
+    function mostrar(){
+        modal.mostrarModal();
+    }
+</script>
+<!--tabla que muestra tipos de elementos con su respectivos colores-->
+<div class="miclase">
+    <table width="100%" align="center" class="listado_mini">
+        <tr>
+            <td class="celdaborde3" height="2" width="13%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Html <i class="spriteColour spriteColour-html" ></i></td>
+            <td class="celdaborde3" height="2" width="16%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Javascript <i class="spriteColour spriteColour-javascript"></i></td>
+            <td class="celdaborde3" height="2" width="21%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Text/Javascript <i class="spriteColour spriteColour-TEXTJAVASCRIPT"></i></td>
+            <td class="celdaborde3" height="2" width="12%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Css <i class="spriteColour spriteColour-css"></i></td>
+            <td class="celdaborde3" height="2" width="12%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Img <i class="spriteColour spriteColour-imagen"></i></td>
+            <td class="celdaborde3" height="2" width="12%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Otro <i class="spriteColour spriteColour-otro"></i></td>
+            <td class="celdaborde3" height="2" width="13%" colspan="200%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;" ><a href="#" onclick="mostrar();" style="background-color:  #A4A4A4;"><FONT COLOR="F2F2F2">Ayuda (?) </a> </td>
+        </tr>
+    </table>
+</div>
+<div align="center">
+    <table class="tabla_estadisticas_plus_{__id}">
+        <tr>
+            <td id="gr_archivos_{__id}"> </td>
+        </tr>
+    </table>
+</div>
+<div class="miclase">
+    <table width="100%" align="center" class="listado_mini">
+        <tr>
+            <td class="celdaborde3" height="2" width="12%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">OK <i class="spriteColour spriteColour-ok" style="width: 10px;height: 10px;background-image: url(../img/color/ok.png);"></i></td>
+            <td class="celdaborde3" height="2" width="12%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Redirección <i class="spriteColour spriteColour-redireccion" style="width: 10px;height: 10px;background-image: url(../img/color/redireccion.png);"></i></td>
+            <td class="celdaborde3" height="2" width="12%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Error <i class="spriteColour spriteColour-error" style="width: 10px;height: 10px;background-image: url(../img/color/error.png);"></i></td>
+            <td class="celdaborde3" height="2" width="12%" colspan="100%" style="background-color:  #A4A4A4; border: solid 1px #FFFFFF; padding: 3px;"><FONT COLOR="F2F2F2">Exclusión <i class="spriteColour spriteColour-exclusion" style="width: 10px;height: 10px;background-image: url(../img/color/exclusion.png);"></i></td>
+        </tr>
+    </table>
+</div>
+<div align="center">
+    <table class="tabla_estadisticas_plus_{__id}">
+        <tr>
+            <td id="gr_estados_{__id}"  ></td>
+        </tr>
+    </table>
+</div>
+<!--modal ayuda-->
+<!--modal Muestra elementos-->
+<div dojoType="dijit.Dialog" id="ModalAyuda" title="Ayuda"  >
+    <table width="750">
+        <tr>
+            <td style="padding: 4px 4px 4px 0px;"><i class="spriteImg spriteImg-header"></i></td>
+        </tr>
+    </table>
+    <table width="750">
+        <tr>
+            <th id="contenido"> </th>
+        </tr>
+    </table>
+</div>
+<!--modal Muestra elementos-->
+<div dojoType="dijit.Dialog" id="ModalMuestra" style="width: 500px">
+    <div class="Modal" id="usoIE">
+        <table class="definicion" style="width:480px;" id="contenido2" ></table>
+    </div>
+</div>
+<div width="auto" align ="center" id="contenedor_{__id}" style="padding-top: 5px">  </div>
+<i class="spriteImg spriteImg-advertencia" id="elemNoData" style="display: none"></i>
+<script type="text/javascript">
+    var porcen_formato='{__porcen_archivo}';
+    var nombre_formato='{__nombre_formato}';
+    var color_formato='{__color_formato}';
+    var nombre_status='{__nombre_status}';
+    var porcen_status='{__porcen_status}';
+    var cantidad_status='{__cantidad_status}';
+    var color='{__color}';
+    var tabla='{__data}';
+    if (porcen_formato >0 && nombre_formato!=null && color_formato!=null){
+        Highcharts.chart('gr_archivos_{__id}', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                width:749,
+                height:300,
+                useHTML:true
+            },
+            credits:{
+                enabled:false
+            },
+            title: {
+                text: '<strong>Estadísticas por categoría de archivo</strong>',
+                style: "{ 'color': '#333333', 'fontSize': '3px' }"
+            },
+            tooltip: {
+                useHTML:true,
+                formatter: function() {
+                    return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+                }
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled:true,
+                        formatter: function() {
+                            return this.point.name +'<br>'+this.y+' %';
+                        },
+                        connectorWidth:"2",
+                        distance:18,
+                        style:{
+                            fontSize:"10px",
+                            color:"black"
+                        }
+                    }
+                }
+            },
+            series: [{
+                colorByPoint: true,
+                type: 'pie',
+                data: [
+                <!-- BEGIN BLOQUE_VARIABLES_FORMATO -->
+                <!-- BEGIN BLOQUE_FORMATO -->
+                {
+                    name:'{__nombre_formato}',
+                    y:{__porcen_archivo},
+                    color:'{__color_formato}'
+                },
+                <!-- END BLOQUE_FORMATO -->
+                <!-- END BLOQUE_VARIABLES_FORMATO -->
+                ],
+            }]
+        });
+    }
+    Highcharts.wrap(Highcharts.Tooltip.prototype, 'refresh', function(proceed) {
+        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        $('.highcharts-container').parent().on('click', function() {
+            $('#gr_estados_{__id} .highcharts-container .highcharts-tooltip').hide();
+        });
+    });
+    if(porcen_status> 0 && cantidad_status!=null && nombre_status!=null && color!=null && tabla!=null){
+        Highcharts.chart('gr_estados_{__id}', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie',
+                width:749,
+                height:300,
+                useHTML:true
+            },
+            credits:{
+                enabled:false
+            },
+            title: {
+                text: '<strong>Estadísticas por categoría de estado</strong>',
+                style: "{ 'color': '#333333', 'fontSize': '7px' }"
+            },
+            tooltip: {
+                useHTML:true,
+                formatter: function() {
+                    return '<b>'+ this.point.tabla +'</b>';
+                },
+                borderRadius:1,
+                hideDelay:"600001",
+                headerFormat:"Lista de elementos en estado: <b>{point.key}</b>",
+                style: {
+                    pointerEvents: 'auto'
+                },
+                positioner: function () {
+                    return { x: 318, y: 49 };
+                }
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled:true,
+                        inside:true,
+                        formatter: function() {
+                            return this.point.name +'<br>'+this.y+' %';
+                        },
+                        connectorWidth:"2",
+                        distance:18,
+                        rotation:"0",
+                        style:{
+                            fontSize:"10px",
+                            color:"black"
+                        }
+                    }
+                }
+            },
+            series: [{
+                colorByPoint: true,
+                type: 'pie',
+                events: {
+                    mouseOver: function() {
+                        $('.highcharts-tooltip').show();
+                    },
+                },
+                data: [
+                <!-- BEGIN BLOQUE_VARIABLES_CATEGORIAS -->
+                <!-- BEGIN BLOQUE_CATEGORIAS -->
+                {
+                    name:'{__nombre_status}' ,
+                    cantidad:'{__cantidad_status}',
+                    y:{__porcen_status},
+                    color: '{__color}',
+                    tabla:'{__data}'
+                },
+                <!-- END BLOQUE_CATEGORIAS -->
+                <!-- END BLOQUE_VARIABLES_CATEGORIAS -->
+                ],
+            }]
+        });
+    }
+</script>
+

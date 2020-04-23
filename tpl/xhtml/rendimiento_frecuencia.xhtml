@@ -1,0 +1,165 @@
+<script type="text/javascript">
+		
+	var chart_frecuencia_absoluta;
+	$(document).ready(function() {
+            var color_sla_ok='#5FB404';
+            var color_sla_error='#d22129';
+            var prueba = 'true';
+            var es_descarga_pdf = true;
+            if('{es_descarga}'=='true'){
+               es_descarga_pdf = false;
+            }
+            chart_frecuencia_absoluta = new Highcharts.Chart({
+                    exporting: { enabled: false},
+                    credits : {
+                        enabled : false
+                    },
+                    chart: {
+                            animation:false,
+                            renderTo: 'rendimiento_frecuencia_absoluta', 
+                            defaultSeriesType: 'spline',
+                            ignoreHiddenSeries : false,
+                            zoomType: 'x',
+                            height:300,
+                resetZoomButton: {
+                    theme: {
+                        fill: 'white',
+                        stroke: 'silver',
+                        r: 0,
+                        states: {
+                            hover: {
+                                fill: '#41739D',
+                                style: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
+                }
+                    },
+                    title:{
+                            text:null,
+                    },
+                    xAxis: {
+                            lineColor: '#c0c0c0',
+                            gridLineWidth: 0.3,
+//				min:0,
+                            minorGridLineColor: '#E0E0E0',
+                            minorTickInterval: 'auto',	
+                            title: {
+                                    style: { color: '#5A5A5A' },
+                                    text: 'Tiempo de Respuesta [s]'
+                            },
+                    labels: {
+                                    formatter: function() {
+                                            return this.value;
+                                    }
+                    },	
+                            {__x_scale_maximum}
+                        plotLines: [
+                                    <!-- BEGIN TIENE_SLA_OK -->
+                                    {
+                                            color: color_sla_ok,
+                                            width: 2,
+                                            value: parseFloat({__sla_ok_value})
+                                    },
+                                    {//SLA ok
+                                            color: color_sla_ok,
+                                            width: 2,
+                                            value: parseFloat({__sla_ok_value}),
+                            label: {
+                                text: parseFloat({__sla_ok_value}),
+                                style:{
+                                    color:'#54a51c',
+                                    'font-size':11
+                                },
+                                rotation:'0',
+                                align: 'right',
+                                x: -10
+                            },
+                            zIndex: 3
+                                    },
+
+                                    <!-- END TIENE_SLA_OK -->
+                                    <!-- BEGIN TIENE_SLA_ERROR -->
+                                    {
+                                            color: color_sla_error,
+                                            width: 2,
+                                            value: parseFloat({__sla_error_value})
+                                    },
+                                    {//SLA error
+                                            color: color_sla_error,
+                                            width: 2,									
+                                            value: parseFloat({__sla_error_value}),
+                            label: {
+                                text: parseFloat({__sla_error_value}),
+                                rotation:'0',
+                                style:{
+                                    color:'#D22129',
+                                    'font-size':11,
+                                },
+                                align: 'right',
+                                x: 13
+                            },
+                            zIndex: 3
+                                    }							
+                                    <!-- END TIENE_SLA_ERROR -->
+                            ],
+                },			
+                    yAxis: {
+                            title: {
+                                    style: { color: '#5A5A5A' },
+                                    text: 'Cantidad de Mediciones'
+                            },
+//				min:0,
+                            gridLineWidth: 0.3,
+                    },
+                    tooltip: {
+                            style: { fontSize: '11px' },
+                            backgroundColor:'rgba(255,255,255,1)',
+                            formatter: function() {
+                                    return '<b>'+this.series.name+'</b><br/>'+
+                                           '<b>Tiempo de Respuesta :</b> '+ this.x+' [s]<br/>'+
+                                           '<b>Mediciones :</b> '+Highcharts.numberFormat(this.y,0,',');
+                            },
+                    },
+                    legend: {
+                            enabled:false
+                    },
+            plotOptions: {
+                series: {
+                    enableMouseTracking: es_descarga_pdf,
+                    animation: false
+                }
+            },
+            series: [
+                            <!-- BEGIN SERIES_ELEMENT -->
+                            {
+                                    name: '{__series_name}',
+                                    color: '#{__series_color}',
+                                    marker: {
+                                            enabled: {__marker}
+                                    },
+                                    data:[
+                                            <!-- BEGIN POINT_ELEMENT -->							
+                                            [{__point_name},{__point_value}],
+                                            <!-- END POINT_ELEMENT -->
+                                    ]
+                            },
+                            <!-- END SERIES_ELEMENT -->
+                    ]
+            });
+            //ADAPTAR LEYENDA
+            leyenda(chart_frecuencia_absoluta, ['leyenda_frecuencia_absoluta1','leyenda_frecuencia_absoluta2'], true, true, true, false, 'linea', [chart_frecuencia_absoluta], 'Pasos');
+        });
+</script>
+		
+<div style="page-break-inside: avoid;">
+	<div id="rendimiento_frecuencia_absoluta"></div>
+	<table align="center">
+		<tr>
+			<td style="vertical-align:top"><div id="leyenda_frecuencia_absoluta1" style="width:450px"></div></td>
+			<td style="vertical-align:top"><div id="leyenda_frecuencia_absoluta2" style="width:150px"></div></td>
+		</tr>
+	</table>
+</div>

@@ -1,0 +1,76 @@
+<link rel="stylesheet" href="{__path_jquery_ui}css/jquery-ui-css/jquery-ui-1.10.min.css"></link>
+<script type="text/javascript" src="{__path_jquery_ui}js/jquery-ui-1.10.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        try{
+            var disponibilidadGlobal = new disponibilidad();
+            disponibilidadGlobal.contenedor_div = 'contenedor_div_global';
+            disponibilidadGlobal.contenedor = 'cuadroGlobal';
+            disponibilidadGlobal.contenedor_svg = 'cuadroGlobal2';
+            disponibilidadGlobal.nombreGrafico = 'disponibilidadGlobal'
+            disponibilidadGlobal.asociar();
+            disponibilidadGlobal.escalaActual = 1;
+            //VARIABLE QUE ALMACENA LOS PUNTOS A DIBUJAR
+            disponibilidadGlobal.datos = {{__datos}};
+
+            //Variable que toma los elementos asociados a los id de los objetivos y los enlaza de la siguiente forma
+            //[obj_id,["nombre Objetivo",padre,expandido, estado triangulo (rotado o no)]
+            disponibilidadGlobal.resources = [<!-- BEGIN BLOQUE_RESOURCES -->
+                                                    ["{__resource_id}",["{__resource_name}","{__resource_parent}",true,false]],
+                                                   <!-- END BLOQUE_RESOURCES -->
+                                                  ];
+            
+            //Usada para indicar el nivel asociado al objetivo (El nivel es la cantidad de antecesores que tiene)
+            disponibilidadGlobal.grupos={<!-- BEGIN BLOQUE_GRUPOS -->
+                                                "{__grupo_id}":0,
+                                              <!-- END BLOQUE_GRUPOS -->
+                                              };
+
+            //el alto se determina por  la cantidad de objetivos-paso-monitor que existan y los múltiplica por 20 pixeles
+            disponibilidadGlobal.alto=(disponibilidadGlobal.resources.length+1)*20;
+            disponibilidadGlobal.altoTotal=disponibilidadGlobal.alto+60;
+            disponibilidadGlobal.tipo = "global";
+
+
+            //modifica el alto por la cantidad de elementos a gráficar
+            document.getElementById('cuadroGlobal').setAttribute("height",disponibilidadGlobal.alto+60);
+            document.getElementById(disponibilidadGlobal.contenedor_div).setAttribute("style","height:"+(disponibilidadGlobal.alto+80)+"px; overflow-X:auto; width:719px;overflow-Y:hidden");
+             document.getElementById('cuadroGlobal2').setAttribute("height",disponibilidadGlobal.alto+60);
+             disponibilidadGlobal.fechaMayor=disponibilidadGlobal.buscaFechaMayor();
+             disponibilidadGlobal.fechaMenor=disponibilidadGlobal.buscaFechaMenor();
+             disponibilidadGlobal.segundosTotales = 172800;
+             diferenciaT = (disponibilidadGlobal.diferenciaEntreFechas(disponibilidadGlobal.fechaMenor, disponibilidadGlobal.fechaMayor));
+             
+           
+        //     disponibilidadGlobal.dias=(diferenciaT)/86400;     
+        //     disponibilidadGlobal.diasCalendario = disponibilidadGlobal.dias;
+             
+             diferenciaDias = (disponibilidadGlobal.fechaMayor - disponibilidadGlobal.fechaMenor)/1000;
+             disponibilidadGlobal.dias=((disponibilidadGlobal.fechaMayor - disponibilidadGlobal.fechaMenor)/1000)/86400;
+             
+             if((diferenciaDias>=86400)){
+                 disponibilidadGlobal.diasCalendario = disponibilidadGlobal.dias+1;
+                 
+                 
+             }
+            else{       
+                disponibilidadGlobal.diasCalendario = disponibilidadGlobal.dias;
+                if(disponibilidadGlobal.diasCalendario <2 && disponibilidadGlobal.fechaMenor.getUTCDate()!= disponibilidadGlobal.fechaMayor.getUTCDate()){
+                    disponibilidadGlobal.diasCalendario = disponibilidadGlobal.dias+1;          
+                }
+                
+            }   
+            //LLAMADO A LA FUNCIÓN QUE DIBUJA EL EJE Y
+             disponibilidadGlobal.creaEjeY(disponibilidadGlobal.escala,true);
+             disponibilidadGlobal.creaCalendario(disponibilidadGlobal.escala);
+             disponibilidadGlobal.creaEscalas(); 
+        }
+        catch(err){
+            console.log(err);
+        }    
+    });
+</script>
+<div style="overflow-X:auto; width:719px;overflow-Y:hidden" id="contenedor_div_global"></div>
+<div class="modal" id="dialog" title="Marcado especial" style="display:none"; >
+</div>

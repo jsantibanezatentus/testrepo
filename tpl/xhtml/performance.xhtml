@@ -1,0 +1,408 @@
+
+<!-- Styles -->
+<style>
+    .chartdiv {
+      width: 100%;
+      height: 600;
+    }
+    .celdanegra40 {
+        padding: 2px 2px 2px 2px;
+        background-color: #a2a2a2;
+        font-family: Verdana,Arial,Helvetica,sans-serif;
+        font-size: 12px;
+    }
+    
+    .text{
+        font-family: Trebuchet MS, Verdana, sans-serif;
+        font-size: 12px;
+    }
+    
+    
+    </style>
+    <!-- Resources -->
+    <script type="text/javascript" src="tools/amcharts/amcharts.js"></script>
+    <script type="text/javascript" src="tools/amcharts/serial.js"></script>
+    
+    <!-- BEGIN BLOQUE_OBJETIVOS2 -->
+    <div id='{__id}'>
+    	<div>
+	    	<div  id="chartdiv_{__id}"class="chartdiv" ></div>
+	    	<div id="table_{__id}"></div>
+	    </div>
+    </div>
+    <!-- BEGIN BLOQUE_NODOS -->
+    <div id='{__id}_{__monitor}'>
+	    <div  id="chartdiv_{__id}_{__monitor}"class="chartdiv" ></div>
+	    <div  id="table_{__id}_{__monitor}"></div>
+    </div>
+    <!-- END BLOQUE_NODOS -->
+    <!-- END BLOQUE_OBJETIVOS2 -->
+    
+    <script>
+    	var table=document.getElementById("table_especial")
+    	table.width="100%"
+        user = '{__user}'
+        objs=""
+        nodos=''
+        <!-- BEGIN BLOQUE_OBJETIVOS -->
+            objs +='{__id},{__paso},{__sla_p},{__sla_e},{__global},{__parcial}|'
+        	nodos+="{__id}:{__nodos}:{__max}|"
+        <!-- END BLOQUE_OBJETIVOS -->
+        
+        objs= objs.slice(0, -1);
+        nodos= nodos.slice(0, -1);
+        $.ajax({
+			async: false,
+			type: "POST",
+			url: "utils/getObjetivoPaso.php",
+			data: {'user': user, 'data':objs, 'inicio':'{__inicio}', 'termino':'{__termino}', "data_nodo":nodos},
+			success: function(data) {
+				data = JSON.parse(data)
+				//console.log(data)
+				//RECORRE OBJETIVOS
+				$.each(data, function(index, objetivo){
+					if(objetivo.globales){
+						dataObj=[]
+						tabla='<table align="center" width="40%"><tr><td style="border: solid 1px #ffffff;" class="celdanegra40">Fecha</td><td style="border: solid 1px #ffffff;" class="celdanegra40">Perf. 15 Segs.</td><td style="border: solid 1px #ffffff;" class="celdanegra40">Fuera de Sla</td><td style="border: solid 1px #ffffff;" class="celdanegra40">Error</td><td style="border: solid 1px #ffffff;" class="celdanegra40">Promedio</td></tr>'
+						$.each(objetivo.globales, function(i, globals){
+							dctData={"category":globals.dia,"uptime":globals.performance_global, "downtime":globals.error_global, "parcial":globals.parcial_global, "tiempo":globals.promedio_global}
+							dataObj.push(dctData)
+							fecha= globals.fecha
+							if (i%2==0) {
+					    		cell="celdaIteracion1"
+					    	}else{
+					    		cell ="celdaIteracion2"
+					    	}
+							tabla+='<tr><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+fecha+'</td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+globals.performance_global+'</td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+globals.parcial_global+'</td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+globals.error_global+'</td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+globals.promedio_global+'</td></tr>'
+						})
+						tabla+'</table>'
+						var tableData=document.getElementById("table_"+objetivo.objetive)
+						$("#table_"+objetivo.objetive).append(tabla)
+						table=$("#table_"+objetivo.objetive)
+
+						var a = AmCharts.makeChart("chartdiv_"+objetivo.objetive, {
+
+					    "type": "serial",
+						"theme": "light",
+						"columnWidth": 0.8,
+						"titles": [{
+						    "text": objetivo.nombre_objetivo
+						  }, {
+						    "text": 'Performance Global',
+						    "bold": false
+						  }],
+						"valueAxes": [{
+							"stackType": "100%",
+						 	"id": "v1",
+						 	"gridColor": "#FFFFFF",
+		    				"gridAlpha": 0.1,
+		    				"dashLength": 0,
+
+						 	"title": "Performance Rendimiento (%)",
+						 	"position": "left",
+						       "labelFunction": function(value) {
+						      		return Math.round(value) + "%";
+						   		}
+						    }, {
+								"id": "v2",
+								"title": "Tiempo de Respuesta (Segs)",
+								"position": "right",
+								"minimum": 0,
+		    					"maximum": 50,
+
+							}],
+						    
+							// esto hace linea paralela
+							"chartCursor": {
+							    "pan": true,
+								"valueLineEnabled": true,
+								"valueLineBalloonEnabled": true,
+								"cursorAlpha": 0,
+								"valueLineAlpha": 0.2
+							},
+							
+						    "legend": {
+						        "position": "bottom",
+								"useGraphSettings": true,
+						    },
+						    "categoryField": "category",
+						    "categoryAxis": {
+						        "gridAlpha": 0,
+						        "position": "left",
+						    },
+						    //PRIMERA BARRA
+						    "graphs": [{
+						    	"valueAxis": "v1",
+						        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+						        "fillAlphas": 0.95,
+						        "fillColors":"#54a51c",
+						        "labelText": "[[value]]",
+						        "lineAlpha": 0.2,
+						       	"precision" : 1,
+						        "lineAlpha": 0.2,
+						        "fontSize":14,
+						        "title": "Perf. 15 Segundos",
+						        "type": "column",
+								"color": "#000000",
+						        "valueField": "uptime",
+						        "showAllValueLabels": true,
+								"labelPosition":"middle"
+						    }, {
+						    	//SEGUNDA BARRA
+						    	"valueAxis": "v1",
+						        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+						        "fillAlphas": 0.95,
+						        "fillColors":"#fc8e3d",
+						        "labelText": "[[value]]",
+						        "precision" : 1,
+						        "lineAlpha": 0.2,
+						        "fontSize":14,
+						        "title": "Indisp./Error",
+						        "type": "column",
+								"color": "#000000",
+						        "valueField": "downtime",
+						        "showAllValueLabels": true,
+						        "labelPosition":"middle"
+						    },{
+						    	//TERCERA BARRA
+						    	"valueAxis": "v1",
+						        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+						        "fillAlphas": 0.95,
+						        "labelText": "[[value]]",
+						        "fillColors":"#989890",
+						        "precision" : 1,
+						        "lineAlpha": 0.2,
+						        "fontSize":14,
+						        "title": "Fuera de Sla",
+						        "type": "column",
+								"color": "#000000",
+						        "valueField": "parcial",
+						        "showAllValueLabels": true,
+						        "labelPosition":"top"
+						    },{
+						    	//LINEA
+						        "bullet": "round",
+						        "valueAxis": "v2",
+						        "dashLength": 5,
+								"bulletBorderAlpha": 1,
+								"bulletColor": "#FFFFFF",
+								"bulletSize": 5,
+								"bulletAlpha":0,
+								"hideBulletsCount": 50,
+								"lineThickness": 2,
+								"lineColor": "red",
+								"type": "smoothedLine",
+								"labelText": "[[value]]",
+								"showAllValueLabels": true,
+								"title": "Tiempo de Respuesta Promedio",
+								"useLineColorForBulletBorder": true,
+								"valueField": "tiempo",
+								"balloonText": "<b>[[title]]</b><span style='font-size:14px'>:[[value]]</span>",
+								"noStepRisers":true,
+								"labelPosition":"bottom"
+						    }],
+						    "dataProvider":dataObj,
+						    //esto hace filtro
+							//"chartScrollbar": barGenerate() ,
+						});
+					}else{
+						$("#"+objetivo.objetive).remove();
+					}
+				})
+				//RECORRE OBJETIVOS
+				$.each(data, function(index, objetivo){
+					console.log(objetivo)
+					//RECORRE NODOS
+					if(typeof objetivo["data"]!=="undefined"){
+						$.each(objetivo["data"], function(index, data_nodo){
+							monitor_id=(data_nodo["monitor_id"])
+							nombre_nodo=data_nodo["data_nodo"]["nombre"]
+							performance=(data_nodo["performance"])
+							createChart(objetivo["objetive"], performance, objetivo["nombre_objetivo"], objetivo["paso"]["nombre_paso"], monitor_id, nombre_nodo)
+						})
+					}
+				})
+			}
+		})
+       function barGenerate(){
+				if('{__pdf}'=='true'){
+					return {}
+				}else{
+					newarr=[]
+					newarr.push({
+						"graph": "g1",
+						"oppositeAxis": false,
+						"offset": 30,
+						"scrollbarHeight": 50,
+						"backgroundAlpha": 0,
+						"selectedBackgroundAlpha": 0.1,
+						"selectedBackgroundColor": "#888888",
+						"graphFillAlpha": 0,
+						"graphLineAlpha": 0.5,
+						"selectedGraphFillAlpha": 0,
+						"selectedGraphLineAlpha": 1,
+						"autoGridCount": true,
+						"color": "#AAAAAA"
+					})
+					return newarr[0]
+				}
+			}
+		function createChart(objetivo, performance, nombre_objetivo, nombre_paso, monitor_id, nombre_nodo){
+			
+			if(performance.length==0){
+				document.getElementById("chartdiv_"+objetivo+"_"+monitor_id).style.display="none"
+				$("#table_"+objetivo+"_"+monitor_id).append('<table Align="center" width="100%"><tr><td align="center" style="border: solid 1px #ffffff;" class="celdanegra50">'+nombre_objetivo+"-"+nombre_nodo+'</td></tr></table><table align="center" id="sin_datos"><tr><td width="20"><i class="spriteImg spriteImg-advertencia"></i></td><td align="center" class="textgris12">No se encontraron datos para este monitoreo.</td></tr></table>')
+			}else{
+				data= new Array()
+				tabla='<table align="center" width="40%"><tr><td style="border: solid 1px #ffffff;" class="celdanegra40">Fecha</td><td style="border: solid 1px #ffffff;" class="celdanegra40">Perf. 15 Segs.</td><td style="border: solid 1px #ffffff;" class="celdanegra40">Fuera de Sla</td><td style="border: solid 1px #ffffff;" class="celdanegra40">Error</td><td style="border: solid 1px #ffffff;" class="celdanegra40">Promedio</td></tr>'
+				$.each(performance, function(index, performanceData){
+					fecha= (performanceData["fecha"].split("T"))[0]
+					if (index%2==0) {
+			    		cell="celdaIteracion1"
+			    	}else{
+			    		cell ="celdaIteracion2"
+			    	}
+					tabla+='<tr><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+fecha+'</td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+performanceData["performance"]+'</td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+performanceData["parcial"]+'</td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+performanceData["error"]+'</td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;" class='+cell+'>'+performanceData["media"]+'</td></tr>'
+
+					dctData={"category":performanceData["dia_semana"],"uptime":performanceData["performance"], "downtime":performanceData["error"], "parcial":performanceData["parcial"], "tiempo":performanceData["media"]}
+					data.push(dctData)
+				})
+				tabla+'</table>'
+				var tableData=document.getElementById("table_"+objetivo+"_"+monitor_id)
+				$("#table_"+objetivo+"_"+monitor_id).append(tabla)
+				table=$("#table_"+objetivo+"_"+monitor_id)
+				titulo=nombre_objetivo+"-"+nombre_nodo
+
+				var chart = AmCharts.makeChart("chartdiv_"+objetivo+'_'+monitor_id, {
+			    "type": "serial",
+				"theme": "light",
+				"columnWidth": 0.8,
+				
+				"titles": [{
+				    "text": titulo
+				  }, {
+				    "text": nombre_paso,
+				    "bold": false
+				  }],
+				"valueAxes": [{
+					"stackType": "100%",
+				 	"id": "v1",
+				 	"gridColor": "#FFFFFF",
+    				"gridAlpha": 0.1,
+    				"dashLength": 0,
+
+				 	"title": "Performance Rendimiento (%)",
+				 	"position": "left",
+				       "labelFunction": function(value) {
+				      		return Math.round(value) + "%";
+				   		}
+				    }, {
+						"id": "v2",
+						"title": "Tiempo de Respuesta (Segs)",
+						"position": "right",
+						"minimum": 0,
+    					"maximum": 50,
+
+					}],
+				    
+					// esto hace linea paralela
+					"chartCursor": {
+					    "pan": true,
+						"valueLineEnabled": true,
+						"valueLineBalloonEnabled": true,
+						"cursorAlpha": 0,
+						"valueLineAlpha": 0.2
+					},
+					
+				    "legend": {
+				        "position": "bottom",
+						"useGraphSettings": true,
+				    },
+				    "categoryField": "category",
+				    "categoryAxis": {
+				        "gridAlpha": 0,
+				        "position": "left",
+				    },
+				    //PRIMERA BARRA
+				    "graphs": [{
+				    	"valueAxis": "v1",
+				        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+				        "fillAlphas": 0.95,
+				        "fillColors":"#54a51c",
+				        "labelText": "[[value]]",
+				        "lineAlpha": 0.2,
+				        "fontSize":14,
+				        "precision" : 1,
+				        "title": "Perf. 15 Segundos",
+				        "type": "column",
+						"color": "#000000",
+				        "valueField": "uptime",
+				        "showAllValueLabels": true,
+				        "labelPosition":"middle"
+				    }, {
+				    	//SEGUNDA BARRA
+				    	"valueAxis": "v1",
+				        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+				        "fillAlphas": 0.95,
+				        "fillColors":"#fc8e3d",
+				        "labelText": "[[value]]",
+				        "precision" : 1,
+				        "lineAlpha": 0.2,
+				        "fontSize":14,
+				        "title": "Indisp./Error",
+				        "type": "column",
+						"color": "#000000",
+				        "valueField": "downtime",
+				        "showAllValueLabels": true,
+				        "labelPosition":"middle"
+				    },{
+				    	//TERCERA BARRA
+				    	"valueAxis": "v1",
+				        "balloonText": "<b>[[title]]</b><br><span style='font-size:12px'>[[category]]: <b>[[value]]</b></span>",
+				        "fillAlphas": 0.95,
+				        "labelText": "[[value]]",
+				        "fillColors":"#989890",
+				        "lineAlpha": 0.1,
+				        "precision" : 1,
+				        "fontSize":14,
+				        "title": "Fuera de Sla",
+				        "type": "column",
+						"color": "#000000",
+				        "valueField": "parcial",
+				        "showAllValueLabels": true,
+				        "labelPosition":"top"
+				    },{
+				    	//LINEA
+				        "bullet": "round",
+				        "valueAxis": "v2",
+				        "dashLength": 5,
+						"bulletBorderAlpha": 1,
+						"bulletColor": "#FFFFFF",
+						"bulletSize": 5,
+						"bulletAlpha":0,
+						"hideBulletsCount": 50,
+						"lineThickness": 2,
+						"lineColor": "red",
+						"type": "smoothedLine",
+						"title": "Tiempo de Respuesta Promedio",
+						"useLineColorForBulletBorder": true,
+						"valueField": "tiempo",
+						"labelText": "[[value]]",
+						"balloonText": "<b>[[title]]</b><span style='font-size:14px'>:[[value]]</span>",
+						"noStepRisers":true,
+						"showAllValueLabels": true,
+						"labelPosition":"bottom"
+				    }],
+				    "dataProvider":data,
+				    //esto hace filtro
+					"chartScrollbar": barGenerate() ,
+				});
+			}
+
+			
+		}
+
+		
+
+    
+    </script>

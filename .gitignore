@@ -1,0 +1,7 @@
+.metadata
+.buildpath
+.project
+.settings/
+.metadata
+config/connection.ini
+config/application.ini

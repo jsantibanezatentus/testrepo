@@ -1,0 +1,146 @@
+<script type="text/javascript">
+	var chart_disponibilidad_resumen_global;
+	
+	$(document).ready(function() {
+		chart_disponibilidad_resumen_global = new Highcharts.Chart({//GRAFICO 1
+			exporting: { enabled: false},
+			credits : {
+			    enabled : false
+			},
+					
+			chart: {
+				height:300,
+				renderTo: 'disponibilidad_resumen_global',
+				type: 'column',
+				zoomType: 'y',
+				marginRight:30,
+	            resetZoomButton: {
+	                theme: {
+	                    fill: 'white',
+	                    stroke: 'silver',
+	                    r: 0,
+	                    states: {
+	                        hover: {
+	                            fill: '#41739D',
+	                            style: {
+	                                color: 'white'
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+			},
+			title: {
+				text: ''
+			},
+			xAxis: [{
+				lineColor: '#c0c0c0',
+				gridLineWidth: 0.3,
+				title: {
+					style: { color: '#5A5A5A', fontSize: '12px', fontWeight: 'bold', fontFamly:'Verdana, Arial, Helvetica, sans-serif' },
+					text: 'Pasos'
+				},
+				labels:{
+					useHTML:true,
+					step:{__step},
+					formatter: function() {
+						return '<div style="width: 90px; overflow: hidden; text-overflow: ellipsis; float: left; white-space: nowrap">'+ {__label} +'</div>';
+					}
+				},
+				categories: [
+					<!-- BEGIN SERIES_NAME -->
+					"{__series_name}",
+					<!-- END SERIES_NAME -->	             
+			    ]
+			}],
+			yAxis: [{
+				lineColor: '#c0c0c0',
+				gridLineWidth: 0.3,
+				lineWidth: 1,
+				min: 0,
+				max:100,
+				minRange:6,
+				labels: {
+					formatter: function() {
+						return Highcharts.numberFormat(this.value, 0);
+					},
+				},
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Disponibilidad [%]',
+				},
+				stackLabels: {
+					enabled: false,
+					style: {
+						fontWeight: 'bold',
+					}
+				}
+			}],
+			tooltip: {
+                                followPointer:true,
+				style: { fontSize: '11px' },
+				backgroundColor:'rgba(255,255,255,1)',
+				formatter: function() {
+					return '<b>'+this.x+'</b><br/>'+
+					'<b>'+this.series.name+': </b>' + Highcharts.numberFormat(this.y, 2) + ' %';
+				},
+			},
+			legend: {
+				enabled:false
+			},
+			plotOptions: {
+				column: {
+					stacking: 'normal',
+					dataLabels: {
+						enabled: false,
+					},
+				},
+			    series: {
+	               animation: false,
+	               shadow:false,
+	               borderWidth:0,
+	               dataLabels: {
+                       enabled: true,
+                       style: { fontSize: '10px', color: '#000000'},
+                       formatter: function() {
+                    	   {__returnNull}
+                    	   if(this.y<7){
+                    		   return null
+                    	   }
+                           return Highcharts.numberFormat(this.y, 2) + '%';
+                       }
+                   },
+             	   {__pointWidth}
+	            }
+			},
+			series: [
+				<!-- BEGIN SERIES_ELEMENT -->		
+				{			
+				    name:"{__point_name}" ,	
+				    color:"#{__serie_color}",	
+				    data: [
+						<!-- BEGIN POINT_ELEMENT -->
+						{__point_value},
+						<!-- END POINT_ELEMENT -->
+					]
+				}, 
+				<!-- END SERIES_ELEMENT -->
+		    ]
+		});
+
+		{__leyenda_label}
+
+		leyenda(chart_disponibilidad_resumen_global, ['leyenda_disponibilidad_resumen_global1'], true, false, false, false, 'barra', [chart_disponibilidad_resumen_global],'');
+	});
+
+</script>
+
+<div style="page-break-inside: avoid;">
+	<div id="disponibilidad_resumen_global"></div>
+	
+	<table align="center">
+		<tr>
+			<td  style="vertical-align:top; padding-top:10px"><div id="leyenda_disponibilidad_resumen_global1" style="width:{__ancho_leyenda1}px; padding-top:0px" ></div></td>
+		</tr>
+	</table>
+</div>

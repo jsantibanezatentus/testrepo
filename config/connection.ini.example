@@ -1,0 +1,19 @@
+[rw]
+id   = "1"
+host = "10.20.12.100"
+user = "reporte_web"
+pass = ".112233."
+db   = "central2010"
+port = "5432"
+prefix = "pgsql"
+class  = ""
+
+[ro]
+id   = "2"
+host = "10.20.12.100"
+user = "reporte_web"
+pass = ".112233."
+db   = "central2010"
+port = "5432"
+prefix = "pgsql"
+class  = ""

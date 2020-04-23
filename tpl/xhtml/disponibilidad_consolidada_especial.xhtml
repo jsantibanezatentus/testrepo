@@ -1,0 +1,253 @@
+<link rel="stylesheet" href="tools/jquery/css/jquery-ui-css/jquery-ui-1.10.min.css"></link>
+<script type="text/javascript" src="tools/jquery/js/jquery-ui-1.10.min.js"></script>
+<script type="text/javascript">
+
+	var chart_disponibilidad_consolidada_{__objetivo_id}_{__horario_id_item};
+	var chart_disponibilidad_real_{__objetivo_id}_{__horario_id_item};
+	
+	$(document).ready(function() {		
+		color_letra = '#000000';
+		chart_disponibilidad_consolidada_{__objetivo_id}_{__horario_id_item} = new Highcharts.Chart({
+
+			exporting: { 
+				enabled: false
+			},
+			credits : {
+				enabled : false
+			},
+			chart: {
+				height:400,
+				renderTo: 'disponibilidad_consolidada_{__objetivo_id}_{__horario_id_item}',
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: true,
+				options3d: {
+					enabled: true,
+					alpha: 45
+				}
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '18px', fontWeight: 'normal', fontFamily:'Varela Round, sans-serif'},
+				text: ''
+			},
+			tooltip: {
+				useHTML:true,
+				style: { fontSize: '14px', fontWeight: 'normal', fontFamily: 'Varela Round, sans-serif'},
+				formatter: function() {
+					return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+				}
+			},
+			legend:{
+				enabled:true,
+				align:'right',
+				layout: 'vertical',
+				itemWidth: 130,
+				borderWidth:0,
+				verticalAlign:'top',
+				y:60
+			},
+			plotOptions: {
+				pie: {
+					animation:false,
+					allowPointSelect: true,
+					cursor: 'pointer',
+					depth: 45,
+					dataLabels: {
+						distance: 35,
+						style: { color: color_letra, 
+							fontSize: '12px', 
+							fontWeight: 'normal', 
+							fontFamily:'Varela Round, sans-serif'},
+							formatter: function() {
+								return this.point.name+': '+this.y +' %';
+							}
+						},
+						showInLegend:true,
+					}
+				},
+				series: [{
+					type: 'pie',
+					data: [
+					{
+						name: '{__uptime_nombre}',
+						y: {__porcentaje_uptime},
+						color: '#{__uptime_color}',
+					},
+
+					{
+						name: '{__downtime_nombre}',
+						y: {__porcentaje_downtime},
+						color: '#{__downtime_color}'
+					},
+
+					{
+						name: '{__parcial_nombre}',
+						y: {__porcentaje_parcial},
+						color: '#{__parcial_color}'
+					},
+
+					{
+						name: '{__no_monitoreo_nombre}',
+						y: {__porcentaje_no_monitoreo},
+						color: '#{__no_monitoreo_color}'
+					},
+
+					{
+						name: '{__marcado_nombre}',
+						y: {__porcentaje_marcado},
+						color: '#{__marcado_color}'
+					},
+					],
+				}]
+			});
+
+		chart_disponibilidad_real_{__objetivo_id}_{__horario_id_item} = new Highcharts.Chart({
+
+			exporting: { 
+				enabled: false
+			},
+			credits : {
+				enabled : false
+			},
+			chart: {
+				height:400,
+				renderTo: 'disponibilidad_consolidada_real_{__objetivo_id}_{__horario_id_item}',
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: true,
+				options3d: {
+					enabled: true,
+					alpha: 45
+				}
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '18px', fontWeight: 'normal', fontFamily:'Varela Round, sans-serif'},
+				text: ''
+			},
+			tooltip: {
+				useHTML:true,
+				style: { fontSize: '14px', fontWeight: 'normal', fontFamily: 'Varela Round, sans-serif'},
+				formatter: function() {
+					return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+				}
+			},
+			legend:{
+				enabled:true,
+				align:'right',
+				layout: 'vertical',
+				itemWidth: 130,
+				borderWidth:0,
+				verticalAlign:'top',
+				y:60
+			},
+			plotOptions: {
+				pie: {
+					animation:false,
+					allowPointSelect: true,
+					cursor: 'pointer',
+					depth: 35,
+					dataLabels: {
+						distance: 35,
+						style: { color: color_letra, 
+							fontSize: '12px', 
+							fontWeight: 'normal', 
+							fontFamily:'Varela Round, sans-serif'},
+							formatter: function() {
+								return this.point.name+': '+this.y +' %';
+							}
+						},
+						showInLegend:true,
+					}
+				},
+				series: [{
+					type: 'pie',
+					data: [
+					{
+						name: '{__uptime_nombre}',
+						y: {__uptime_real},
+						color: '#{__uptime_color}',
+					},
+
+					{
+						name: '{__downtime_nombre}',
+						y: {__downtime_real},
+						color: '#{__downtime_color}'
+					},
+					],
+				}]
+			});
+
+	});
+</script>
+
+<div class="txtNegro13" style="padding: 6px; border: solid 1px #ffffff;">{__item_orden}</div>
+<table width="100%">
+	<tr>
+		<td style="text-align: center; text-shadow: #000000 1px 2px 3px;" colspan="2" class="celdaTituloNaranjo txtBlanco15b">Disponibilidad Consolidada Real</td>
+	</tr>
+	<tr>
+		<td style="text-align: center; border-color: #D5D5D5;" class="celdaTituloGris txtBlanco15b">Uptime %</td>
+		<td style="text-align: center; border-color: #D5D5D5;"class="celdaTituloGris txtBlanco15b">Downtime %</td>
+	</tr>
+	<tr>
+		<td style="text-align: right; font-family: 'Varela Round', sans-serif;" class="celdaIteracion2">{__uptime_real}</td>
+		<td style="text-align: right; font-family: 'Varela Round', sans-serif;" class="celdaIteracion2">{__downtime_real}</td>
+	</tr>
+	<tr></tr>
+</table>
+
+<table width="100%">
+	<tr>
+		<td>
+			<div id="disponibilidad_consolidada_real_{__objetivo_id}_{__horario_id_item}"></div>
+		</td>
+	</tr>
+	<tr ></tr>
+</table>
+
+<table width="100%">
+	<tr>
+		<td style="text-align: center;  text-shadow: #000000 1px 2px 3px;" colspan="5" class="celdaTituloNaranjo txtBlanco15b">Disponibilidad Consolidada</td>
+	</tr>
+	<tr>
+		<td style="text-align: center; border-color: #D5D5D5;" class="celdaTituloGris txtBlanco15b">Uptime %</td>
+		<td style="text-align: center; border-color: #D5D5D5;" class="celdaTituloGris txtBlanco15b">Downtime %</td>
+		<td style="text-align: center; border-color: #D5D5D5;" class="celdaTituloGris txtBlanco15b">Downtime Parcial %</td>
+		<td style="text-align: center; border-color: #D5D5D5;" class="celdaTituloGris txtBlanco15b">No monitoreo %</td>
+		<td style="text-align: center; border-color: #D5D5D5;" class="celdaTituloGris txtBlanco15b">Marcado %</td>
+	</tr>
+	<tr>
+		<td style="text-align: right; font-family: 'Varela Round', sans-serif;" class="celdaIteracion2">{__porcentaje_uptime}</td>
+		<td style="text-align: right; font-family: 'Varela Round', sans-serif;" class="celdaIteracion2">{__porcentaje_downtime}</td>
+		<td style="text-align: right; font-family: 'Varela Round', sans-serif;" class="celdaIteracion2">{__porcentaje_parcial}</td>
+		<td style="text-align: right; font-family: 'Varela Round', sans-serif;" class="celdaIteracion2">{__porcentaje_no_monitoreo}</td>
+		<td style="text-align: right; font-family: 'Varela Round', sans-serif;" class="celdaIteracion2">{__porcentaje_marcado}</td>
+	</tr>
+	<tr></tr>
+</table>
+<table width="100%">
+	<tr>
+		<td>
+			<div id="disponibilidad_consolidada_{__objetivo_id}_{__horario_id_item}"></div>
+		</td>
+	</tr>
+	<tr></tr>
+</table>
+
+<style type="text/css">
+@font-face {
+	font-family: 'Varela Round';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Varela Round Regular'), local('VarelaRound-Regular'), url(varela_round.woff2) format('woff2');
+	unicode-range: U+0590-05FF, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
+table tr {
+	height: 25px;
+}
+
+table tr.titulo {
+	height: 5px;
+}
+</style>

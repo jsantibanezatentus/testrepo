@@ -1,0 +1,295 @@
+<link rel="stylesheet" href="tools/jquery/css/jquery-ui-css/jquery-ui-1.10.min.css"></link>
+<script type="text/javascript" src="tools/jquery/js/jquery-ui-1.10.min.js"></script>
+<!-- BEGIN BLOQUE_PASOS -->
+<script type="text/javascript">
+
+	var chart_error_disponibilidad_{__paso_id};
+	var chart_error_downtime_isp_{__paso_id};
+	var chat_error_distribucion_isp_{__paso_id};
+	
+	$(document).ready(function() {
+                var color_datalabel= 'rgba(74, 74, 74, 0.5)';
+                var color_letra='#ffffff';
+                var distancia = 2;
+                if('{es_descarga}'=='true'){
+                    color_datalabel= '#D8D8D8';
+                    color_letra = '#000000';
+                }
+		chart_error_disponibilidad_{__paso_id} = new Highcharts.Chart({
+        	
+			exporting: { enabled: false},
+			credits : {
+				enabled : false
+			},
+			chart: {
+				height:300,
+				width:350,
+				renderTo: 'error_disponibilidad_consolidada_{__paso_id}',
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: true
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold', fontFamily:'Verdana, Arial, Helvetica, sans-serif' },
+				text: 'Disponibilidad Consolidada'
+			},
+			tooltip: {
+				useHTML:true,
+				formatter: function() {
+					return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+				}
+			},
+			legend:{
+				enabled:true,
+				align:'right',
+				layout: 'vertical',
+				itemWidth: 130,
+				borderWidth:0,
+				verticalAlign:'top',
+				y:60
+			},
+			plotOptions: {
+				pie: {
+					animation:false,
+					allowPointSelect: true,
+					cursor: 'pointer',
+					dataLabels: {
+						distance:distancia,
+						backgroundColor: color_datalabel,
+						style: { color: color_letra, fontSize: '8px', fontWeight: 'normal', fontFamily:'Verdana, Arial, Helvetica, sans-serif' },
+						formatter: function() {
+							return this.y +' %';
+						}
+					},
+					showInLegend:true,
+				}
+			},
+			series: [{
+				type: 'pie',
+				data: [
+					<!-- BEGIN DISPONIBILIDAD_POINT_ELEMENT --> 
+					{
+						name: '{__disponibilidad_point_name}',
+						y: {__disponibilidad_point_value},
+						color: '#{__disponibilidad_point_color}'
+					},
+					<!-- END DISPONIBILIDAD_POINT_ELEMENT -->
+				],
+			}]
+		});
+
+		//DISTRIBUCION DE ERRORES
+		chart_error_downtime_isp_{__paso_id} = new Highcharts.Chart({
+			exporting: { enabled: false},
+			credits : {
+				enabled : false
+			},
+			chart: {
+				height:300,
+				width:350,
+				renderTo: 'error_downtime_isp_{__paso_id}',
+				plotBackgroundColor: null,
+				plotBorderWidth: null,
+				plotShadow: false
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold', fontFamily:'Verdana, Arial, Helvetica, sans-serif' },
+				text: 'Downtime entre ISP'
+			},
+			tooltip: {
+				useHTML:true,
+				formatter: function() {
+					return '<b>'+ this.point.name +'</b>: '+ this.y +' %';
+				}
+			},
+			legend:{
+				enabled:true,
+				align:'right',        	
+				layout: 'vertical',
+				itemWidth: 100,
+				borderWidth:0,
+				verticalAlign:'top',
+				y:60,
+				x:-20,
+			},
+			plotOptions: {
+				pie: {
+					animation:false,
+					allowPointSelect: true,
+					cursor: 'pointer',
+					dataLabels: {
+						distance:distancia,
+						backgroundColor: color_datalabel,
+						style: { color: color_letra, fontSize: '8px', fontWeight: 'normal', fontFamily:'Verdana, Arial, Helvetica, sans-serif' },
+						formatter: function() {
+							return this.y +' %';
+						}
+					},
+					showInLegend:true,
+				}
+			},
+			series: [{
+				type: 'pie',
+				data:[
+					<!-- BEGIN DOWNTIME_POINT_ELEMENT -->
+					{
+						name: '{__downtime_point_name}',
+						y: {__downtime_point_value},
+						color: '#{__downtime_point_color}'
+					},
+					<!-- END DOWNTIME_POINT_ELEMENT -->
+				],
+			}]
+		});
+    
+		//DISTRIBUCIÓN DE ERRORES
+		chat_error_distribucion_isp_{__paso_id} = new Highcharts.Chart({//GRAFICO 1
+			exporting: { enabled: false},
+			credits : {
+				enabled : false
+			},
+		
+			chart: {
+				height:300,
+				renderTo: 'error_distribucion_isp_{__paso_id}',
+				type: 'column',
+				zoom:false ,
+				marginRight:30,
+				resetZoomButton: {
+					theme: {
+						fill: 'white',
+						stroke: 'silver',
+						r: 0,
+						states: {
+							hover: {
+								fill: '#41739D',
+								style: {
+									color: 'white'
+								}
+							}
+						}
+					}
+				}
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold', fontFamily:'Verdana, Arial, Helvetica, sans-serif' },
+				text: 'Disponibilidad'
+			},
+			xAxis: [{
+				lineColor: '#c0c0c0',
+				gridLineWidth: 0.3,
+
+				title: {
+					style: { color: '#5A5A5A', fontSize: '12px', fontWeight: 'bold', fontFamly:'Verdana, Arial, Helvetica, sans-serif' },
+					text: 'Monitores'
+				},
+				labels:{
+					useHTML:true,
+					step: {__step},
+					formatter: function(){
+						return {__label}
+					}
+				},
+				categories: [
+					<!-- BEGIN SERIES_NAME -->
+					"{__series_name}",
+					<!-- END SERIES_NAME -->	             
+				]
+			}],
+			yAxis: [{
+				lineColor: '#c0c0c0',
+				gridLineWidth: 0.3,
+				lineWidth: 1,
+				minRange:6,
+				min: 0,
+				max:100,
+				labels: {
+					formatter: function() {
+						return Highcharts.numberFormat(this.value, 0);
+					},
+				},
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Errores [%]',
+				},
+				stackLabels: {
+					enabled: false,
+					style: {
+						fontWeight: 'bold',
+					}
+				}
+			}],
+			tooltip: {
+				style: { fontSize: '11px' },
+				backgroundColor:'#FFFFFF',
+                                followPointer:true,
+				formatter: function() {
+					return  '<b>'+this.x+'</b><br/>' 
+						+this.series.name+'<br/>'
+						+ Highcharts.numberFormat(this.y, 2) + ' %';
+				},
+			},
+			legend: {
+				borderWidth:0,
+			},
+			plotOptions: {
+				column: {
+					stacking: 'normal',
+					dataLabels: {
+						enabled: false,
+					}
+				},				        
+				series: {
+					animation: false,
+					shadow:false,
+					borderWidth:0,
+					{__pointWidth}
+				}
+			},
+			series: [
+				<!-- BEGIN ERRORES_SERIES_ELEMENT -->
+				{			
+					name:"{__errores_point_name}" ,	
+					color:"#{__errores_point_color}",	
+					data: [
+						<!-- BEGIN ERRORES_POINT_ELEMENT -->
+						{__errores_point_value},
+						<!-- END ERRORES_POINT_ELEMENT -->
+					]
+				}, 
+				<!-- END ERRORES_SERIES_ELEMENT -->				
+			]
+		});
+		{__leyenda_label}
+	});
+    
+</script>
+
+<div style="page-break-inside: avoid;">
+	<div style="display: {__tiene_titulo};">
+		<div class="txtNegro13" style="padding: 6px; border: solid 1px #ffffff;">{__item_orden}.{__paso_orden}. {__paso_nombre}</div>
+	</div>
+	<table width="100%">
+		<tr>
+			<td>
+				<div id="error_disponibilidad_consolidada_{__paso_id}"></div>
+			</td>
+			<td>
+				<div id="error_downtime_isp_{__paso_id}"></div>
+			</td>
+		</tr>
+	</table>
+	<div id="error_distribucion_isp_{__paso_id}"></div>
+	<div id="leyenda_error_distribucion_isp_{__paso_id}"></div>
+</div>
+<!-- END BLOQUE_PASOS -->
+
+<script type="text/javascript">
+$(function() {
+// Ejecuta la inialización del acordeon.
+if ('{__tiene_evento}' == 'true'){
+	$('#man').show();
+	createAccordion('{__name}');	
+}
+});
+</script>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Atentus.com - Especial Banco Bogotá</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="/tools/bootstrap/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/tools/fontawesome/js/fontawesome.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/toolscss/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/toolscss/fontawesome/css/all.min.css">
+</head>
+<body>
+	<style type="text/css">
+			body {
+				font-family: 'Poppins-Light', sans-serif;
+			}
+			@font-face {
+				font-family: 'Poppins-Light';
+				src: url(‘fonts/Poppins-Light.woff′) format(‘woff’);
+				font-weight: 500;
+				font-style: normal;
+			}
+
+			.card_style {
+				background-color: #fff;
+				border-radius: 0.55rem;
+			}
+
+			.style_objective_name {
+				color: black;
+				font-weight: 500;
+			}
+
+			.container_umbral {
+				background-color: #eee;
+				text-align: right;
+			}
+
+			.divisor {
+				border-bottom: 2px solid #cacaca;
+			}
+
+			@media screen and (max-width: 1280px){
+				/*celu*/
+				.titulo_reporte{
+					font-size: 2.2vw;
+				}
+				.nombre_obj{
+					font-size: 3vw;
+				}
+				.padding_paso{
+					 padding-bottom: .2vw;
+					 padding-top: .2vw;
+				}
+				.nombre_paso{
+					font-size: 3vw;
+				}
+				.letra_respuesta{
+					font-size: 3vw;
+				}
+				.letra_desc{
+					font-size: 2.2vw;
+					color: #74797d;
+					font-weight: bold;
+				}
+				.titulo_update{
+					font-size: 2.5vw;
+				}
+				.umbral{
+					font-size: 2.5vw;
+				}
+			}
+			@media screen and (min-width: 1281px) and (max-width: 1920px){
+				/*compu*/
+				.titulo_reporte{
+					font-size:1.3vw;
+				}
+				.nombre_obj{
+					font-size:1vw;
+				}
+				.padding_paso{
+					 padding-bottom: .2vw;
+					 padding-top: .2vw;
+				}
+				.nombre_paso{
+					font-size: .8vw;
+				}
+				.letra_respuesta{
+					font-size: .8vw;
+				}
+				.letra_desc{
+					font-size: .7vw;
+					color: #74797d;
+					font-weight: bold;
+				}
+				.titulo_update{
+					font-size: .8vw;
+				}
+			}
+
+			@media screen and (min-width: 1921px) and (max-width: 2560px){
+				/*1080*/
+				.titulo_reporte{
+					font-size:1.3vw;
+				}
+				.nombre_obj{
+					font-size:1vw;
+				}
+				.padding_paso{
+					 padding-bottom: .2vw;
+					 padding-top: .2vw;
+				}
+				.nombre_paso{
+					font-size: .8vw;
+				}
+				.letra_respuesta{
+					font-size: .8vw;
+				}
+				.letra_desc{
+					font-size: .7vw;
+					color: #74797d;
+					font-weight: bold;
+				}
+				.titulo_update{
+					font-size: 1vw;
+				}
+			}
+
+			@media screen and (min-width: 2561px) and (max-width: 3840px){
+				/*4K*/
+				.titulo_reporte{
+					font-size:1.3vw;
+				}
+				.nombre_obj{
+					font-size:1.2vw;
+				}
+				.padding_paso{
+					 padding-bottom: .2vw;
+					 padding-top: .2vw;
+				}
+				.nombre_paso{
+					font-size: .8vw;
+				}
+				.letra_respuesta{
+					font-size: .8vw;
+				}
+				.letra_desc{
+					font-size: .7vw;
+					color: #74797d;
+					font-weight: bold;
+				}
+				.titulo_update{
+					font-size: 1vw;
+				}
+			}
+
+		</style>
+	<div class="container" style="max-width: 92.5% !important">
+		<div class="row">
+
+			<!-- LOGOS -->
+			<div class="container" style="background-color: #fff; max-width: 92.5% !important">
+				<div class="row align-items-center">
+					<div hre class="col-4 col-sm-4 col-lx-6 col-lg-6 col-md-6 mb-2 mt-2" style="text-align: left;">
+						<img src="img/especiales/b_bogota.jpg">
+					</div>
+					<div class="col-8 col-sm-8 col-lx-6 col-lg-6 col-md-6 mb-2 mt-2" style="text-align: right;">
+						<a href="https://reporte2.atentus.com"><img src="img/atentus_logo_2020.png"></a>
+					</div>
+				</div>
+			</div>
+
+			<!-- TITULO REPORTE ESPECIAL -->
+			<div class="container" style="background-color: #e6e6e6; max-width: 92.5% !important">
+				<div class="row align-items-center mt-2">
+					<div class="col-12 col-sm-12 col-lx-6 col-lg-6 col-md-6">
+						<a class="font-weight-bold text-secondary titulo_reporte">Flashboard CoE TI - Digital Experience Monitoring</a>
+					</div>
+					<div class="col-12 col-sm-12 col-lx-6 col-lg-6 col-md-6" id="timeNow">
+						
+					</div>
+				</div>
+			</div>
+
+			<!-- CONTAINER CARDS -->
+			<div class="container" id="container" style="background-color: #f2f3f7; max-width: 92.5% !important"></div>
+		</div>
+	</div>
+
+		<script type="text/javascript">
+			url = window.location.href
+			var url = new URL(url)
+			var token = url.searchParams.get("token")
+			var objetivo = url.searchParams.get("objetivo")
+			var especialBogota = function() {
+				/*$(document).ready(function(){
+				  var altura_arr = []
+				  $('.card_style').each(function(){
+				    var altura = $(this).height()
+				    altura_arr.push(altura)
+				  })
+				  altura_arr.sort(function(a, b){return b-a})
+				  $('.card_style').each(function(){
+				    $(this).css('height',altura_arr[0])
+				  })
+				})*/
+				var dateNowTime = new Date(Date.now())
+				const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+				var localTime = (dateNowTime.toLocaleTimeString('es-ES'))
+				dateNowTime = (dateNowTime.toLocaleDateString('es-ES', options))
+				if (document.getElementById("time")) {
+					document.getElementById("time").remove()
+				}
+				var divTime = '<div id="time"'+
+				'<p class="text-secondary text-right titulo_update" style="font-weight: 400;">'+
+					'<i class="fas fa-sync-alt"></i> '+
+				'Última actualización '+localTime+', '+dateNowTime+'</p>'+
+				'</div>'
+
+				$("#timeNow").append(divTime)
+
+				circle_red = '<!-- SPINNER BOUNCE -->'+
+				'<div class="col-1">'+
+				'<div class="spinner-grow spinner-grow-sm text-danger mb-2" role="status" style="animation: spinner-grow .5s linear infinite; width: 2rem; height: 2rem;">'+
+				'<span class="sr-only"></span>'+
+				'</div>'+
+				'</div>'
+
+				circle_green = '<!-- CIRCULO VERDE -->'+
+				'<div class="col-1">'+
+				'<i class="fas fa-circle" style="color: #3bb71c; font-size: 36px;"></i>'+
+				'</div>'
+
+				circle_yellow = '<!-- CIRCULO AMARILLO -->'+
+				'<div class="col-1">'+
+				'<i class="fas fa-circle" style="color: #ffd700; font-size: 36px;"></i>'+
+				'</div>'
+
+				circle_orange = '<!-- CIRCULO NARANJO -->'+
+				'<div class="col-1">'+
+				'<i class="fas fa-circle" style="color: #da8e1d; font-size: 36px;"></i>'+
+				'</div>'
+
+				icono_desktop = '<i class="fas fa-desktop" style="font-size: 30px"></i>'
+				icono_mobile = '<i class="fas fa-mobile-alt" style="font-size: 30px"></i>'
+				$.ajax({
+					async: false,
+					type: 'POST',
+					url: 'utils/especial_banco_bogota.php',
+					data: {'objetivo':  objetivo, 'token': token},
+					success: function(data) {
+						if (document.getElementById("objs_card")) {
+							document.getElementById("objs_card").remove()
+						}
+						dataparse = JSON.parse(data)
+						function SortByColor(a){
+							var json = []
+							var colores = {0:"#d42323", 1:"#dacc1d", 2:"#da8e1d", 3: "#3bb71c"}
+							$.each(colores, function(i, color){
+								$.each(dataparse, function(j, objetivo){
+									if (objetivo.color == color) {
+										json.push(objetivo)
+									}
+								})
+							})
+							return json
+						}
+						dataparse = SortByColor(dataparse)
+						if (Object.entries(dataparse).length == 0) {
+							div_card = '<div class="row align-top" id="objs_card">'+
+								'<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-lx-12" >'+
+									'<div class="card card_style mt-4 mb-3" style="background-color: red;">'+
+										'<div class="card-body" >'+
+											'<!-- FILA OBJETIVO -->'+
+											'<div class="row">'+
+												'<!-- NOMBRE OBJETIVO -->'+
+												'<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-lx-12">'+
+													'<h6 class="card-title style_objective_name text-center" style="color: white; font-weight: bold;">Objetivo no asignado a este servicio</h6>'+
+												'</div>'+
+											'</div>'+
+										'</div>'+
+									'</div>'+
+								'</div>'+
+							'</div>'
+							$("#container").append(div_card)
+							return
+						}
+
+						if (typeof(dataparse) == "string") {
+							dataparse = JSON.parse(dataparse)
+							div_card = '<div class="row align-top" id="objs_card">'+
+								'<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-lx-12" >'+
+									'<div class="card card_style mt-4 mb-3" style="background-color: red;">'+
+										'<div class="card-body" >'+
+											'<!-- FILA OBJETIVO -->'+
+											'<div class="row">'+
+												'<!-- NOMBRE OBJETIVO -->'+
+												'<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-lx-12">'+
+													'<h6 class="card-title style_objective_name text-center" style="color: white; font-weight: bold;">'+dataparse.error+'</h6>'+
+												'</div>'+
+											'</div>'+
+										'</div>'+
+									'</div>'+
+								'</div>'+
+							'</div>'
+							$("#container").append(div_card)
+							return
+						}
+						div_card = '<div class="row align-top" id="objs_card">'
+						$.each(dataparse, function(index, objetivo){
+							if (objetivo.color == "#3bb71c") {
+								estado = circle_green
+							}else if(objetivo.color == "#da8e1d"){
+								estado = circle_orange
+							}else if(objetivo.color == "#d42323"){
+								estado = circle_red
+							}else{
+								estado = circle_yellow
+							}
+
+							if (objetivo.servicio != 700) {
+								icono_servicio = icono_desktop
+							}else{
+								icono_servicio = icono_mobile
+							}
+							nombre_obj = objetivo.nombre
+							div_card += '<!-- CARD -->'+
+							'<div class="col-12 col-sm-12 col-md-12 col-lg-4 col-lx-4" >'+
+							'<div class="card card_style mt-4 mb-3" style="border: 4px solid '+objetivo.color+';">'+
+							'<div class="card-body" style="margin-left: 5%; margin-right: 5%;">'+
+							'<!-- FILA OBJETIVO -->'+
+							'<div class="row align-items-center m-2">'+
+							estado+
+							'<!-- NOMBRE OBJETIVO -->'+
+							'<div class="col-9 col-sm-9 col-md-9 col-lg-9 col-lx-9">'+
+							'<p class="card-title style_objective_name text-center mb-0 nombre_obj" >'+nombre_obj+'</p>'+
+							'</div>'+
+							'<!-- TIPO DE SERVICIO DEL OBJETIVO -->'+
+							'<div class="col-2 col-sm-2 col-md-1 col-lg-1 col-lx-1">'+
+							icono_servicio+
+							'</div>'+
+							'</div>'+
+							'<!-- UMBRAL OBJETIVO -->'+
+							'<div class="row container_umbral">'+
+							'<div style="margin: 3px;">'+
+							'<a class="card-subtitle text-muted umbral">'+
+							'<i class="far fa-clock"></i>'+
+							' Umbral definido '+objetivo.umbral+' s'+
+							'</a>'+
+							'</div>'+
+							'</div>'+
+							'<!-- ETIQUETA PASO Y TIEMPO DE RESPUESTA -->'+
+							'<div class="row mt-4">'+
+							'<div class="col-4">'+
+							'<a class="letra_desc">Paso</a>'+
+							'</div>'+
+							'<div class="col-8 text-right">'+
+							'<a class="letra_desc">Tiempo de respuesta</a>'+
+							'</div>'+
+							'</div>'+
+							'<div class="row divisor"></div>'
+							$.each(objetivo.pasos, function(index, paso){
+								div_card += '<!-- PASO: NOMBRE Y TIEMPO DE RESPUESTA -->'+
+								'<div class="row mb-2 mt-2 align-items-center">'+
+								'<!-- ESTADO DEL PASO PINTADO EN BORDE IZQUIERDO -->'+
+								'<div class="col-9 col-sm-9 col-lx-9 col-lg-9 col-md-9 padding_paso" style="border-left: 7px solid '+paso.estado+';">'+
+								'<a class="nombre_paso" color: #686868; nombre_paso">'+paso.nombre_paso+'</a>'+
+								'</div>'+
+								'<div class="col-3 col-sm-3 col-lx-3 col-lg-3 col-md-3 text-right">'+
+								'<a style="color: #686868;" class="letra_respuesta">'+paso.tiempo_respuesta+' s</a>'+
+								'</div>'+
+								'</div>'+
+								'<!-- DIVISOR -->'+
+								'<div class="row divisor"></div>'
+							})
+
+							div_card += '</div>'+
+							'</div>'+
+							'</div>'
+						})
+						div_card += '</div>'
+						$("#container").append(div_card)
+					}
+				})
+			}
+			setInterval(especialBogota, 150000)
+			especialBogota()
+		</script>
+	</body>
+	</html>

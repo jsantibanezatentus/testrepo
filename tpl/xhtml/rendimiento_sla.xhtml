@@ -1,0 +1,138 @@
+<script type="text/javascript">
+
+					
+	var chart_rendimiento_sla_{__sla_tipo};
+	$(document).ready(function() {
+		chart_rendimiento_sla_{__sla_tipo} = new Highcharts.Chart({
+			exporting: { enabled: false},
+			credits : {
+			    enabled : false
+			},
+					
+			chart: {
+				height:300,
+				renderTo: 'rendimiento_sla_{__sla_tipo}',
+				type: 'column',
+				zoomType: false,
+				shadow:false,
+				plotShadow:false,
+	            resetZoomButton: {
+	                theme: {
+	                    fill: 'white',
+	                    stroke: 'silver',
+	                    r: 0,
+	                    states: {
+	                        hover: {
+	                            fill: '#41739D',
+	                            style: {
+	                                color: 'white'
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold' },
+				text: ''
+			},
+			xAxis: {
+				lineColor: '#c0c0c0',
+				gridLineWidth: 1,
+				gridLineWidth: 0.3,
+				labels:{
+					useHTML:true,
+					step:{__step},
+					formatter: function(){
+	                	return {__label}
+					}
+				},
+				title: {
+					useHTML:true,
+					style: { color: '#5A5A5A', fontSize: '12px', fontWeight: 'bold' },
+					text: 'Pasos'
+				},	
+				categories: [
+					<!-- BEGIN SERIES_NAME -->
+					"{__series_name}",
+					<!-- END SERIES_NAME -->
+				]
+			},
+			yAxis: [{
+				lineColor: '#c0c0c0',
+				lineWidth: 1,
+				min: 0,
+				max:100,
+				gridLineWidth: 0.3,
+				labels: {
+					formatter: function() {
+						return Highcharts.numberFormat(this.value, 0);
+					},
+				},
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Cumplimiento SLA Ok [%]',
+				},
+				stackLabels: {
+					enabled: false,
+					style: {
+						fontWeight: 'bold',
+					},
+				}						
+			}],
+			tooltip: {
+                                followPointer:true,
+				style: {
+					fontSize: '11px',
+				},						
+				formatter: function() {
+					return '<b>'+this.series.name+'</b><br/>'+						      
+				 		Highcharts.numberFormat(this.y,2,',') +' [%] ';						
+					},
+			},
+			legend: {
+				enabled:false
+			},
+			plotOptions: {
+				column: {
+					pointPadding: -0.4,
+					{__group_padding}
+					borderWidth: 0,
+				},
+		    	series: {
+					animation: false,
+					<!-- BEGIN ANCHO_SERIE -->
+					{__pointWidth}
+					<!-- END ANCHO_SERIE -->
+				}
+			},
+			series: [
+				
+				<!-- BEGIN SERIES_ELEMENT -->		
+				{			
+					name:"{__point_name}" ,	
+					color:"#{__point_color}",
+					shadow: false,	
+					data: [
+						<!-- BEGIN POINT_ELEMENT -->
+						{__point_value},
+						<!-- END POINT_ELEMENT -->
+					]
+				}, 
+				<!-- END SERIES_ELEMENT -->
+			]
+		});
+		{__leyenda_label}
+		leyenda(chart_rendimiento_sla_{__sla_tipo}, ['leyenda1rensla_{__sla_tipo}','leyenda2rensla_{__sla_tipo}'], true, false, false, false, 'barra', [chart_rendimiento_sla_{__sla_tipo}], '');
+	});
+</script>
+
+<div style="page-break-inside: avoid;">
+	<div id="rendimiento_sla_{__sla_tipo}"></div>
+	<table align="center">
+		<tr>
+			<td style="vertical-align:top;"><div id="leyenda2rensla_{__sla_tipo}" style="width:{__ancho_leyenda1}px;" ></div></td>
+			<td style="vertical-align:top;"><div id="leyenda1rensla_{__sla_tipo}" style="width:{__ancho_leyenda2}px; text-align:center; background-color:#F4F4F4"></div></td>
+		</tr>
+	</table>
+</div>

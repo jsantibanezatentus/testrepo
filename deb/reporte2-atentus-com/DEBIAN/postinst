@@ -1,0 +1,38 @@
+#!/bin/sh
+
+echo " "
+
+if [ -f /var/www/reporte2.atentus.com/config/application.ini ]; then
+	echo "Se encontro el archivo de configuracion 'application.ini' instalado: "
+else
+	cp /var/www/reporte2.atentus.com/config/application.ini.example /var/www/reporte2.atentus.com/config/application.ini
+	echo "Se instalo el archivo de configuracion 'application.ini' por defecto: "
+fi
+
+echo "/var/www/reporte2.atentus.com/config/application.ini \n";
+
+if [ -f /var/www/reporte2.atentus.com/config/connection.ini ]; then
+	echo "Se encontro el archivo de configuracion 'connection.ini' instalado: "
+else
+	cp /var/www/reporte2.atentus.com/config/connection.ini.example /var/www/reporte2.atentus.com/config/connection.ini
+	echo "Se instalo el archivo de configuracion 'connection.ini' por defecto: "
+fi
+
+echo "/var/www/reporte2.atentus.com/config/connection.ini \n";
+
+if [ -f /etc/nginx/sites-available/default ]; then
+	echo "Se encontro el archivo de configuracion de nginx instalado: "
+else
+	cp /etc/nginx/sites-available/default.example /etc/nginx/sites-available/default
+	ln -s  /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+	echo "Se instalo el archivo de configuracion de nginx por defecto: "
+fi
+
+echo "/etc/nginx/sites-available/default \n";
+
+chown -R www-data:www-data /var/www/reporte2.atentus.com
+
+chmod 777 /var/www/reporte2.atentus.com/www/tmp
+
+echo "Configuracion de paquete terminado";
+

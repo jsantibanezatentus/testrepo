@@ -1,0 +1,161 @@
+<!-- Resources -->
+
+<script type="text/javascript" src="{__path_amcharts}/amcharts.js"></script>
+<script type="text/javascript" src="{__path_amcharts}/serial.js"></script>
+<script type="text/javascript" src="{__path_amcharts}/gantt.js"></script>
+
+<!-- Chart code -->
+<script>
+var chart = AmCharts.makeChart( "chartdiv_{__objetive_id}", {
+  "type": "gantt",
+  "theme": "light",
+  "marginRight": 70,
+  "period": "DD",
+  "dataDateFormat": "YYYY-MM-DDTJJ:NN:SS",
+  "columnWidth": 0.45,
+  "valueAxis": {
+    "type": "date"
+  },
+  //"brightnessStep": 1,
+  "graph": {
+    "lineAlpha": 0.3,
+    "lineColor": "#fff",
+    "fillAlphas": 1,
+    "balloonText": "<b>[[task]]</b>:<br />Inicio: [[start]] <br/> Termino: [[end]]"
+  },
+  "valueScrollbar": {
+    "autoGridCount": false
+  },
+  "chartCursor": {
+    "cursorColor": "#55bb76",
+    "valueBalloonsEnabled": false,
+    "cursorAlpha": 0,
+    "valueLineAlpha": 0.5,
+    "valueLineBalloonEnabled": false,
+    "valueLineEnabled": true,
+    "zoomable": false,
+    "valueZoomable": true
+  },
+  "export": {
+    "enabled": true
+  },
+  "rotate": true,
+  "categoryField": "category",
+  "segmentsField": "segments",
+  "colorField": "color",
+  "startDateField": "start",
+  "endDateField": "end",
+  "dataProvider": [ {
+    "category": '',
+    "segments": [
+    <!-- BEGIN BLOQUE_DATOS -->
+     {
+      "start": '{__inicio}',
+      "end": '{__termino}',
+      "color": '{__color}',
+      "task": '{__evento_id}'
+    },
+    <!-- END BLOQUE_DATOS -->
+    ]
+  }, ],
+  
+} );
+var chart2 = AmCharts.makeChart( "chartdivMon_{__objetive_id}", {
+  "type": "gantt",
+  "theme": "light",
+  "marginRight": 70,
+  "period": "DD",
+  "dataDateFormat": "YYYY-MM-DDTJJ:NN:SS",
+  "columnWidth": 0.4,
+
+  "valueAxis": {
+    "type": "date"
+  },
+  //"brightnessStep": 1,
+  "graph": {
+    "lineAlpha": 0.3,
+    "lineColor": "#fff",
+    "fillAlphas": 1,
+    "balloonText": "<b>[[task]]</b>:<br />Inicio: [[start]] <br/> Termino: [[end]]"
+  },
+  "valueScrollbar": {
+    "autoGridCount": false
+  },
+  "chartCursor": {
+    "cursorColor": "#55bb76",
+    "valueBalloonsEnabled": false,
+    "cursorAlpha": 0,
+    "valueLineAlpha": 0.5,
+    "valueLineBalloonEnabled": false,
+    "valueLineEnabled": true,
+    "zoomable": false,
+    "valueZoomable": true
+  },
+  "export": {
+    "enabled": true
+  },
+  "rotate": true,
+  "categoryField": "category",
+  "segmentsField": "segments",
+  "colorField": "color",
+  "startDateField": "start",
+  "endDateField": "end",
+  "dataProvider": [ 
+  <!-- BEGIN BLOQUE_MONITORES -->
+  {
+    "category": "{__nombre_monitor}",
+    "segments": [ 
+    <!-- BEGIN BLOQUE_DATOS_MONITORES -->
+    {
+      "start": "{__inicio_monitor}",
+      "end": "{__termino_monitor}",
+      "color": "{__color_monitor}",
+      "task": "{__evento_monitor}"
+    },
+    <!-- END BLOQUE_DATOS_MONITORES -->
+    ]
+  },
+  <!-- END BLOQUE_MONITORES -->
+   ],
+  
+} );
+function Mostrar(obj) {
+    var x = document.getElementById("chartdivMon_"+obj);
+    if (x.style.display === "none") {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+
+document.getElementById("especial2").remove()
+document.getElementById("horario").remove()
+document.getElementById("objetivo").remove()
+
+for (var i = 30; i >= 0; i++) {
+    document.getElementById("espacio").remove()
+}
+
+
+</script>
+
+<!-- HTML -->
+<div id="objetivo_{__objetive_id}" style="font-family: Trebuchet MS,Verdana,sans-serif; font-size: 14">{__nombre_objetivo}</div>
+<div id="chartdiv_{__objetive_id}"></div>
+<div id="button_{__objetive_id}">
+    <input  type="button" value="Monitores" onclick="Mostrar({__objetive_id})">
+</div>
+<div id="chartdivMon_{__objetive_id}" style="display: none"></div>
+
+<!-- Styles -->
+<style>
+#chartdiv_{__objetive_id} {
+  width: 1200;
+  height: 100px;
+}
+#chartdivMon_{__objetive_id} {
+  width: 1200px;
+  height: 250px;
+  float: center;
+}
+</style>

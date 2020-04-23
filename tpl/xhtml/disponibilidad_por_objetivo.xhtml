@@ -1,0 +1,82 @@
+<!-- BEGIN BLOQUE_OBJETIVOS -->
+<script type="text/javascript">
+var chart_disponibilidad_por_objetivo;
+$(document).ready(function() {
+	
+	var disponibilidad_por_objetivo_{__objetivo_id} = new disponibilidad();
+	disponibilidad_por_objetivo_{__objetivo_id}.contenedor_div = 'disponibilidad_por_objetivo_div_{__objetivo_id}';
+	disponibilidad_por_objetivo_{__objetivo_id}.contenedor_svg = 'disponibilidad_por_objetivo_svg_{__objetivo_id}';
+	disponibilidad_por_objetivo_{__objetivo_id}.contenedor = 'disponibilidad_por_objetivo_g_{__objetivo_id}';
+	disponibilidad_por_objetivo_{__objetivo_id}.nombreGrafico = 'disponibilidad_por_objetivo_ids_{__objetivo_id}';
+	disponibilidad_por_objetivo_{__objetivo_id}.asociar();
+	disponibilidad_por_objetivo_{__objetivo_id}.monitor_id='{__objetivo_id}';
+	disponibilidad_por_objetivo_{__objetivo_id}.escalaActual = 1;
+	//VARIABLE QUE ALMACENA LOS PUNTOS A DIBUJAR
+	disponibilidad_por_objetivo_{__objetivo_id}.datos = {{__datos}};
+	
+	
+ 
+	//Variable que toma los elementos asociados a los id de los objetivos y los enlaza de la siguiente forma
+	//[obj_id,["nombre Objetivo",padre,expandido, estado triangulo (rotado o no)]
+	disponibilidad_por_objetivo_{__objetivo_id}.resources = [<!-- BEGIN BLOQUE_RESOURCES -->
+    										["{__resource_id}",["{__resource_name}","{__resource_parent}",true,false]],
+   										   <!-- END BLOQUE_RESOURCES -->
+    									  ];
+	
+	//Usada para indicar el nivel asociado al objetivo (El nivel es la cantidad de antecesores que tiene)
+	disponibilidad_por_objetivo_{__objetivo_id}.grupos={<!-- BEGIN BLOQUE_GRUPOS -->
+										"{__grupo_id}":0,
+									  <!-- END BLOQUE_GRUPOS -->
+									  };
+
+	//el alto se determina por  la cantidad de objetivos-paso que existan y los múltiplica por 20 pixeles
+	disponibilidad_por_objetivo_{__objetivo_id}.alto=(disponibilidad_por_objetivo_{__objetivo_id}.resources.length+1)*20;
+	disponibilidad_por_objetivo_{__objetivo_id}.altoTotal=disponibilidad_por_objetivo_{__objetivo_id}.alto+60;
+	
+	
+	document.getElementById(disponibilidad_por_objetivo_{__objetivo_id}.contenedor_div).setAttribute("style","height:"+(disponibilidad_por_objetivo_{__objetivo_id}.alto+80)+"px; width: "+(disponibilidad_por_objetivo_{__objetivo_id}.anchoTotal + 10)+"px; overflow-X:auto; overflow-Y:hidden;");
+	disponibilidad_por_objetivo_{__objetivo_id}.tipo = "global";
+
+	//modifica el alto por la cantidad de elementos a gráficar
+	document.getElementById('disponibilidad_por_objetivo_g_{__objetivo_id}').setAttribute("height", disponibilidad_por_objetivo_{__objetivo_id}.alto+60);
+	document.getElementById('disponibilidad_por_objetivo_svg_{__objetivo_id}').setAttribute("height", disponibilidad_por_objetivo_{__objetivo_id}.alto+60);
+	
+	disponibilidad_por_objetivo_{__objetivo_id}.fechaMayor = disponibilidad_por_objetivo_{__objetivo_id}.buscaFechaMayor();
+	disponibilidad_por_objetivo_{__objetivo_id}.fechaMenor = disponibilidad_por_objetivo_{__objetivo_id}.buscaFechaMenor();
+	disponibilidad_por_objetivo_{__objetivo_id}.segundosTotales = 172800;
+	diferenciaT = (disponibilidad_por_objetivo_{__objetivo_id}.fechaMayor - disponibilidad_por_objetivo_{__objetivo_id}.fechaMenor)/1000;
+	
+	disponibilidad_por_objetivo_{__objetivo_id}.dias=(diferenciaT)/86400;
+	
+	
+	//disponibilidad_por_objetivo_{__objetivo_id}.diasCalendario = disponibilidad_por_objetivo_{__objetivo_id}.dias;
+	if((diferenciaT>=86400)){
+		
+		disponibilidad_por_objetivo_{__objetivo_id}.diasCalendario = disponibilidad_por_objetivo_{__objetivo_id}.dias+1;
+   	}
+   	else{  
+   		
+   		disponibilidad_por_objetivo_{__objetivo_id}.diasCalendario = disponibilidad_por_objetivo_{__objetivo_id}.dias;
+   		if(disponibilidad_por_objetivo_{__objetivo_id}.diasCalendario <2 && disponibilidad_por_objetivo_{__objetivo_id}.fechaMenor.getUTCDate()!= disponibilidad_por_objetivo_{__objetivo_id}.fechaMayor.getUTCDate()){
+   			disponibilidad_por_objetivo_{__objetivo_id}.diasCalendario = disponibilidad_por_objetivo_{__objetivo_id}.dias+1;    		
+   		}
+   	}
+	
+	//LLAMADO A LA FUNCIÓN QUE DIBUJA EL EJE Y
+	disponibilidad_por_objetivo_{__objetivo_id}.creaEjeY(disponibilidad_por_objetivo_{__objetivo_id}.escala,true);
+	disponibilidad_por_objetivo_{__objetivo_id}.creaCalendario(disponibilidad_por_objetivo_{__objetivo_id}.escala);
+	disponibilidad_por_objetivo_{__objetivo_id}.creaEscalas();
+	
+	
+	
+});
+
+
+
+</script>
+
+<div style="page-break-inside: avoid;">
+	
+	<div style="overflow-X:auto; width:100%;" id="disponibilidad_por_objetivo_div_{__objetivo_id}"></div>
+</div>
+<!-- END BLOQUE_OBJETIVOS -->

@@ -1,0 +1,242 @@
+<script type="text/javascript" src="../../js/get_ajax_csv.js"></script>
+<script type="text/javascript">
+
+var arrayData = new Array();
+$("#load_audex").css("display", "none");
+var ms='';
+$(document).ready(function() {
+    
+    $("#container").css("display", "block");
+    /*AL CARGAR POR PRIMERA VEZ EL MENU DESPLEGABLE VALOR POR DEFECTO*/
+    posicion = $("#seleccion")[0].selectedIndex; //posicion
+    tiempo = (document.getElementById('seleccion').options[posicion].text);
+    $("#descripcion_audex").html('{__informacion}');
+    $("#descripcion_audex").css("position", "relative");
+    $("#descripcion_audex").css("text-align", "initial");
+    $("#descripcion_audex").css("display", "block");
+   
+    $("#descargar_csv").css("display", "table-cell");
+    
+  
+    var arrayUmbral = new Array();
+    
+    <!-- BEGIN POINT_ELEMENT -->	
+	 arrayData[{__point_count}]={ x:Date.UTC({__point_name}),y:{__point_value},z:{__point_umbral}{__es_atdex}};
+	 
+	<!-- END POINT_ELEMENT -->
+     
+	var chart_reporte_audex;
+	 //Configuracion del grafico
+    chart_reporte_audex= new Highcharts.Chart({
+    	chart: {
+            renderTo: 'container', 
+            defaultSeriesType: 'line',
+            zoomType: 'x',
+            height:300,
+            ignoreHiddenSeries : false,
+            alignTicks: false,
+            marginRight:30,
+            marginTop:20,
+            resetZoomButton: {
+                theme: {
+                    fill: 'white',
+                    stroke: 'silver',
+                    r: 0,
+                    states: {
+                        hover: {
+                            fill: '#41739D',
+                            style: {
+                                color: 'white'
+                            },
+                        }
+                    }
+                }
+            }
+	},
+        credits: {
+            enabled: false
+        },
+        title: {
+            style: { color: '#5A5A5A' },
+            text: '{__titulo}',
+            useHTML:true,
+            align: 'center',
+            y:6
+	},	
+        subtitle: {
+            text: '',
+            align: 'right',
+            x: -5,
+            y: 50,
+            floating: true,
+            useHTML: true,
+        },
+        tooltip: {
+            style: { fontSize: '11px' },
+            backgroundColor:'rgba(255,255,255,1)',
+            formatter: function() {
+            	var numberLiteral = this.y < 0.5 ? 'Inaceptable' :
+                    this.y >= 0.5 && this.y < 0.7 ? 'Bajo' :
+                    this.y >= 0.7 && this.y < 0.85  ? 'Satisfactorio' :
+                    this.y >= 0.85 && this.y < 0.95? 'Bueno' :
+                    this.y >= 0.95 ? 'Excelente':
+                    '';
+                    if(this.point.options.c>0){
+                    	ms= '[ms]';
+                    }
+                    return '<b>'+this.series.name+'</b><br/>'+
+                    '<b>Fecha :</b> '+Highcharts.dateFormat('%d/%b/%Y %H:%M', this.x)+'<br/>'+
+                    '<b>Indice :</b> '+Highcharts.numberFormat(this.y,2,',')+'<br>'+
+                    '<b>Umbral :</b> '+Highcharts.numberFormat(this.point.options.z,0,',')+ms+ '<br>'+
+                    '<b>'+numberLiteral+'</b>';
+            },
+	},
+        yAxis: {
+            title: {
+                text: 'Indice'
+            },
+            plotBands: [{ 
+                color: 'rgba(132, 132, 132, 0.15)',
+                from: 0,
+                to:{__umbral_intolerable}
+                },
+                { 
+                color: 'rgba(251, 173, 172, 0.15)',
+                from:{__umbral_intolerable},
+                to:{__umbral_satisfactorio}
+                },
+                {
+                color: 'rgba(206, 199, 63, 0.15)',	
+                from:{__umbral_satisfactorio},
+                to: {__umbral_bueno}
+                },
+                {
+                color: 'rgba(106, 216, 110, 0.15)',	
+                from:{__umbral_bueno},
+                to: {__umbral_excelente}
+                },
+                {
+                color: 'rgba(0, 217, 217, 0.15)',	
+                from:{__umbral_excelente},
+                to: 1
+            }],
+            min: 0.2,
+            max:1,
+            plotLines: [{ 
+                color: '#DB8D8C',
+                value: {__umbral_intolerable},
+                width:1,
+                zIndex:3
+                },
+                { 
+                color: '#CEC73F',
+                value: {__umbral_satisfactorio},
+                width:1,
+                zIndex:3
+                },
+                {
+                color: '#6AD86E',
+                value: {__umbral_bueno},
+                width:1,
+                zIndex:3
+                },
+                {
+                color: '#00D9D9',
+                value: {__umbral_excelente},
+                width:1,
+                zIndex:3
+               
+            }],
+        
+           
+        },
+        xAxis: {
+            lineColor: '#c0c0c0',
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                second: '%l:%M:%S%P',
+                minute: '%l:%M%P',
+                hour: '%H:%M',
+                day: "<br/><b>%e/%b</b>",
+                week: '%e. %b',
+                month: '%b %y',
+                year: '%Y'
+	    },			    
+	    labels: {
+                useHTML: true,				            
+	    },		
+            title: {
+                style: { color: '#5A5A5A' },
+                text: 'Período',
+                useHTML:true,
+            }
+	},
+	plotOptions: {
+	    series: {
+	    	turboThreshold:20000,
+	        marker: {
+	            enabled: false
+	        }
+            }
+	},
+        /*EJES*/
+        series: [{		     
+            name:'{__nombre}',
+            data:arrayData
+	}]              
+    }); 
+    
+}); 	
+
+function downloadCsv() {
+
+    json = JSON.stringify(arrayData);
+        /*CREANDO EL FORMULARIO*/
+        $('<form>').attr({
+            type: 'hidden',
+            id: 'form',
+            name: 'form',
+            action: 'descarga_csv.php',
+            method: 'POST',
+            target: '_self',
+        }).appendTo('body');
+
+        $('#form').hide();
+        $('<input>').attr({
+            type: 'text',
+            id: 'datos',
+            name: 'datos',
+            value: json
+        }).appendTo('#form');
+
+        $('<input>').attr({
+            type: 'text',
+            id: 'id_objetivo',
+            name: 'id_objetivo',
+            value: {__objetivo_id}
+        }).appendTo('#form');
+
+        $('<input>').attr({
+            type: 'text',
+            id: 'tipo_grafico',
+            name: 'tipo_grafico',
+            value: 12
+        }).appendTo('#form');
+       
+        $("#form").submit();
+    }  
+</script>
+
+<div style="page-break-inside: avoid;">
+ <!--MENU DESPLEGABLE-->
+        <div   style="display: none">{__selector_tiempo}</div>
+        <div id="container"><br></div>
+	<table align="center">
+            <tr>
+                <p class="informacion-tag textdescripcion" id="descripcion_audex" style="width: 700px"></p>
+                <td style="vertical-align:top"><div style="width:450px" id="leyenda1rencon{__tabla}"></div></td>
+                <td style="vertical-align:top"><div style="width:150px" id="leyenda2rencon{__tabla}"></div></td>
+            </tr>
+	</table>
+</div>
+<div class="progress" id="load" style="text-align: center" ></div>

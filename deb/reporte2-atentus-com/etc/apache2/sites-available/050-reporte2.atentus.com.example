@@ -1,0 +1,27 @@
+<VirtualHost *:443>
+	ServerName reporte2.atentus.com
+        ServerAlias reporte2.atentus.com
+        DocumentRoot /var/www/reporte2.atentus.com/www
+	<Directory /var/www/reporte2.atentus.com/www>
+		AllowOverride all
+		Options -Indexes
+	</Directory>
+        SSLEngine on
+        SSLCertificateKeyFile /etc/ssl/apache/reporte2/reporte2.atentus.com.key
+        SSLCertificateFile /etc/ssl/apache/reporte2/reporte2.atentus.com.crt
+	SSLCertificateChainFile	/etc/ssl/apache/reporte2/gd_bundle.crt
+	ErrorLog  "|/usr/bin/cronolog /var/log/apache2/reporte2.atentus.com.error.log"
+        CustomLog "|/usr/bin/cronolog /var/log/apache2/reporte2.atentus.com.log" combined
+
+        Alias /m /var/www/m.atentus.com
+        <Directory /var/www/m.atentus.com>
+                AllowOverride all
+                Options -Indexes
+        </Directory>
+
+        Alias /tools /var/www/libreporte/js
+        <Directory /var/www/libreporte/js>
+                Order allow,deny
+                Allow from all
+        </Directory>
+</VirtualHost>

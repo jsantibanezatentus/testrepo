@@ -1,0 +1,346 @@
+
+<!-- Styles -->
+<style>
+    .chartdiv {
+      width: 100%;
+      height: 600;
+    }
+    .celdanegra40 {
+        padding: 2px 2px 2px 2px;
+        background-color: #a2a2a2;
+        font-family: Verdana,Arial,Helvetica,sans-serif;
+        font-size: 12px;
+    }
+    
+    .text{
+        font-family: Trebuchet MS, Verdana, sans-serif;
+        font-size: 12px;
+    }
+    
+    
+    </style>
+    <!-- Resources -->
+    <script type="text/javascript" src="tools/amcharts/amcharts.js"></script>
+    <script type="text/javascript" src="tools/amcharts/serial.js"></script>
+    
+    
+    <!-- BEGIN BLOQUE_GRUPO -->
+    <div style='{__break}'>
+	    <table width="100%">
+			<tr>
+				<td align="center" style="padding: 1px 6px 1px 6px; background-color: #a2a2a2; border: solid 1px #a2a2a2;" class="txtBlanco15b">{__nombre_grupo}</td>		
+			</tr>
+			<tr>
+				<td align="center" style="height: 5px" class="txtBlanco15b celdaTituloNaranjo"></td>	
+			</tr>
+		</table>
+	    <div style="width: 1200;" id="chartdiv_{__orden}"class="chartdiv" ></div>
+	    <table>
+	    	<tr>
+	    		<td>
+				    <table>
+				    	<tr height=20px;>
+				    		<td width="20%" style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 10px;font-weight: bold;">Uptime Parcial : </td>
+				    		<td width="80%" style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 10px;">Todos los ISP's presentan disponibilidad para un mismo período de tiempo
+				    		</td>
+				    	</tr>
+				    	<tr height=20px;>
+				    		<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 10px;font-weight: bold;">Downtime Parcial : </td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 10px;">Al menos en uno de los ISP's presenta caídas de disponibilidad en un período de tiempo
+				    		</td>
+				    	</tr>
+				    	<tr height=20px;>
+				    		<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 10px;font-weight: bold;">Downtime : 
+				    		</td>
+				    		<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 10px;">Todos los ISP's presentan caídas o errores de disponibilidad
+				    		</td>
+				    	</tr>
+				    	<tr height=20px;>
+				    		<td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 10px;font-weight: bold;">ISP : </td><td style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 10px;">
+				    			<!-- BEGIN BLOQUE_NODOS -->
+				    			{__nombre_nodos}
+				    			<!-- END BLOQUE_NODOS -->
+				    		</td>
+				    	</tr>
+				    </table>
+
+	    		</td>
+	    		<td style="padding-left: 40;"></td>
+	    		<td>
+	    			<table id ="myTable_{__orden}" style="width: 100%" align="right" cellpadding="2" cellspacing="2" border="1"></table>
+				</td>
+			</tr>
+			<tr>
+				<td height="20px"></td>
+			</tr>
+		</table>
+    
+    
+    <script>
+        user = '{__user}'
+        objs=[]
+        <!-- BEGIN BLOQUE_OBJETIVOS2 -->
+            obj = '{__id_objetivo}'
+            objs += obj + ','
+        <!-- END BLOQUE_OBJETIVOS2 -->
+        objs=(objs.slice(0, -1))
+        paso = '{__paso_id}'
+        ini = '{__inicio}'
+        final = '{__termino}'
+        hash = '{__hash}'
+    
+        objetives = []
+        steps = []
+        arrayObj=Array()
+        <!-- BEGIN BLOQUE_OBJETIVOS -->
+            arrayData=Array()
+            objetivo = ('{__objetivos_id}')
+            nombre_paso = ('{__nombre_paso}')
+            objetives+=objetivo+','
+            nombre_obj = '{__nombre_obj}'
+            uptime = parseFloat(('{__up}'))
+            downtime = parseFloat( '{__down}')
+            downtime_parcial = parseFloat('{__dp}')
+            no_mon = parseFloat('{__no}')
+            up_t =parseFloat('{__up_t}')
+            arrayData.push(objetivo, nombre_obj, uptime,downtime, downtime_parcial, up_t, nombre_paso)
+            arrayObj.push(arrayData)
+        <!-- END BLOQUE_OBJETIVOS -->
+        objetives=(objetives.slice(0, -1))
+        inicio = ('{__inicio}')
+        termino = ('{__termino}')
+        newData=''
+        $.ajax({
+		async: false,
+		type: "POST",
+		url: "utils/get_tiempo_respuesta_intervalo.php",
+		data: {'objetives':objetives,'step': '{__pasos}', 'inicio':inicio, 'termino':termino, 'user':user,'hash':hash },
+		success: function(data) {
+            data = JSON.parse(data)
+			function generateData() {
+	  			var datas = [];
+				$.each(data, function(x,evento){
+					if(arrayObj[x][0]==evento["objetivo_id"]){
+						tiempo_de_respuesta = (evento["tiempo_de_respuesta"])
+						nombre_obj = (arrayObj[x][1])
+						uptime = (arrayObj[x][2])
+						downtime = (arrayObj[x][3])
+						downtime_parcial = (arrayObj[x][4])
+						up_total = arrayObj[x][5]
+						nombre_paso = arrayObj[x][6]
+						total = uptime+downtime+downtime_parcial
+						if(total==0){
+							up=0
+							down=0
+							dp=0
+						}else{
+							if(downtime != 0){
+								down = downtime*100/total
+							}else{
+								down = 0
+							}
+							if(uptime !=0 ){
+								up = uptime*100/total
+							}else{
+								up = 0
+							}
+							if(downtime_parcial !=0 ){
+								dp = downtime_parcial*100/total
+							}else{
+								dp = 0
+							}
+						}
+						upt = up+dp
+						dwpa=dp+down
+						if(nombre_obj=='Banco de Chile'){
+							color='#50c400'
+							bold=true
+							color2='blue'
+						}else{
+							color='#54a51c'
+							bold=false
+							color2='grey'
+						}
+						datas.push( {							
+					      	"category": nombre_obj,
+					        "uptime": up,
+					        "downtime": down,
+					        "parcial": dp,
+					        "parc_down": dwpa,
+					        "up_total": upt,
+					        "tiempo": tiempo_de_respuesta,
+					        "color":color,
+					        "bold":bold,
+					        "color2":color2,
+					    } );
+					}
+				})
+				// sort by value
+				datas.sort(function (a, b) {
+				  	return (a.tiempo - b.tiempo);
+				});
+				datas.sort(function (a, b) {
+				  return (b.up_total+b.uptime) - (a.up_total+a.uptime);
+				});
+				
+				
+				newData=datas
+				return newData;
+			}
+
+			function barGenerate(){
+				if('{__pdf}'=='true'){
+					return {}
+				}else{
+					newarr=[]
+					newarr.push({
+						"graph": "g1",
+						"oppositeAxis": true,
+						"offset": 30,
+						"scrollbarHeight": 50,
+						"backgroundAlpha": 0,
+						"selectedBackgroundAlpha": 0.1,
+						"selectedBackgroundColor": "#888888",
+						"graphFillAlpha": 0,
+						"graphLineAlpha": 0.5,
+						"selectedGraphFillAlpha": 0,
+						"selectedGraphLineAlpha": 1,
+						"autoGridCount": true,
+						"color": "#AAAAAA"
+					})
+					return newarr[0]
+				}
+			}
+
+			var chart = AmCharts.makeChart("chartdiv_{__orden}", {
+			    "type": "serial",
+				"theme": "light",
+				"columnWidth": 0.4,
+				"valueAxes": [{
+					"stackType": "100%",
+				 	"id": "v1",
+				 	"title": "Disponibilidad (%)",
+				 	"position": "left",
+
+			        "labelFunction": function(value) {
+						      		return Math.round(value) + "%";
+					    		}
+			        }, {
+					"id": "v2",
+					"title": "Tiempo de Respuesta (Segs)",
+					"position": "right",
+			   		}
+			    ],
+			    //esto hace filtro
+				"chartScrollbar": barGenerate() ,
+				// esto hace linea paralela
+				"chartCursor": {
+				    "pan": true,
+					"valueLineEnabled": true,
+					"valueLineBalloonEnabled": true,
+					"cursorAlpha": 0,
+					"valueLineAlpha": 0.2
+				},
+			    "legend": {
+			        "position": "top",
+					"useGraphSettings": true,
+			    },
+			    "categoryField": "category",
+			    "categoryAxis": {
+			        "gridAlpha": 0,
+			        "position": "left",
+			        "labelRotation": 0,
+			        "fontSize": 14,
+			        "fontFamily":'Verdana, Arial, Helvetica, sans-serif',
+			        "boldLabels": "bold",
+			        "labelColorField": "color2",
+
+			    },
+
+			    "graphs": [{
+			        "balloonText": "<b>[[title]]</b><br><span>[[category]]: <b>[[value]]</b></span>",
+			        "fillAlphas": 1,
+			        "valueField": "up_total",
+			        "colorField": "color",
+			        "labelText": "[[value]] %",
+			        "lineAlpha": 0.2,
+			        "precision" : 2,
+			        "title": "Uptime (Uptime + Downtime Parcial)",
+			        "type": "column",
+					"color": "#fff",
+					"columnWidth": 0.6,
+					"showAllValueLabels": true,
+			        "fontSize": 14,       
+			    }, 
+			    {
+			        "balloonText": "<b>[[title]]</b><br><span style='font-family: Trebuchet MS, Verdana, sans-serif;'>[[category]]: <b>[[value]]</b></span>",
+			        "fillAlphas": 0,
+			        "lineAlpha": 0,
+			        "labelText": "[[value]] [segs]",
+			        "precision" : 2,
+					"color": "#000000",
+					"showAllValueLabels": true,
+			        "valueField": "tiempo",
+			        "showBalloon": false,
+			        "visibleInLegend": false,
+			        "fontSize": 12,	
+			        "fontFamily": "Trebuchet MS"
+			    }, 
+			    {
+			        "fillAlphas": 0,
+			        "lineAlpha": 0,
+			        "type": "column",			        
+					"showAllValueLabels": false,
+			        "valueField": "downtime",
+			        "showBalloon": false,
+			        "visibleInLegend": false
+			    },
+                {
+			        "bullet": "round",
+			        "valueAxis": "v2",
+					"bulletBorderAlpha": 1,
+					"bulletColor": "#fff",
+					"showHandOnHover": true,
+					"bulletSize": 4,
+					"hideBulletsCount": 0,
+					"lineThickness": 2,
+					"lineColor": "#f47001",
+					"type": "line",
+					"title": "Tiempo de Respuesta",
+					"useLineColorForBulletBorder": true,
+					"valueField": "tiempo",					
+					"showAllValueLabels": false,
+					"legendValueText": "[[value]]",
+			        "fontFamily": "Trebuchet MS",
+					"balloonText": "<b>[[title]]</b><span style='font-size:14px; font-family: Trebuchet MS, Verdana, sans-serif;'>:[[value]]</span>"
+			    },
+			    ],
+			    "dataProvider":generateData(),
+			});
+		}
+	})
+
+    firts ='<tr align="center"><td class="celdanegra40 txtBlanco15b"> Bancos </td>		<td class="celdanegra40 txtBlanco15b">Tiempo Respuesta</td>		<td class="celdanegra40 txtBlanco15b">Uptime Parcial</td>		<td class="celdanegra40 txtBlanco15b"> Downtime Parcial</td>		<td class="celdanegra40 txtBlanco15b">Downtime</td>		<td class="celdanegra40 txtBlanco15b">Uptime</td>	</tr>'
+    $('#myTable_{__orden}').append(firts)
+    $.each(newData, function(index, ele){
+    	if (index%2==0) {
+    		cell="celdaIteracion1"
+    	}else{
+    		cell ="celdaIteracion2"
+    	}
+    	if(ele["category"]=='Banco de Chile'){
+    		fb='style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;font-weight: bold;color:blue"'
+    	}else{
+    		fb='style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 12px;"'
+    	}
+    	tr = '<tr><td '+fb+' class='+cell+'>'+ele["category"]+'</td>'
+    	tr += '<td '+fb+' align="center" class='+cell+'>'+parseFloat(ele["tiempo"]).toFixed(2)+'[s]</td>'
+    	tr += '<td '+fb+' align="center" class='+cell+'>'+parseFloat(ele["uptime"]).toFixed(2)+'(%)</td>'
+    	tr += '<td '+fb+' align="center" class='+cell+'>'+parseFloat(ele["parcial"]).toFixed(2)+'(%)</td>'
+    	tr += '<td '+fb+' align="center" class='+cell+'>'+parseFloat(ele["downtime"]).toFixed(2)+'(%)</td>'
+    	tr += '<td '+fb+' align="center" class='+cell+'>'+parseFloat(ele["up_total"]).toFixed(2)+'(%)</td></tr>'
+    	$('#myTable_{__orden}').append(tr)
+    })
+    </script>
+
+	</div>
+ <!-- END BLOQUE_GRUPO -->

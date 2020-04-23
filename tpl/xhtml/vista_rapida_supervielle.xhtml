@@ -1,0 +1,273 @@
+<!-- Resources -->
+    <script type="text/javascript" src="tools/amcharts/amcharts.js"></script>
+    <script type="text/javascript" src="tools/amcharts/gauge.js"></script>
+
+<style>
+  .lamp {
+    width: 20px;
+height: 20px;
+border: double 5px transparent;
+border-radius: 80px;
+background-image: linear-gradient(#b1b1b1, #b1b1b1), radial-gradient(circle at top left, #fff,#b1b1b1);
+background-origin: border-box;
+background-clip: content-box, border-box;
+
+}
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 2% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 20%; /* Could be more or less, depending on screen size */
+  /*height: 10%;*/
+}
+.cerrar {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .cerrar:hover,
+    .cerrar:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+.celdanegra50 {
+  padding: 2px 2px 2px 2px;
+  background-color: #828282;
+
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+}
+.celdanegra10 {
+  padding: 2px 2px 2px 2px;
+  background-color: #ebebeb;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 10px;
+  color: #525252;
+}
+</style>
+<div>
+  <div id="trafficLight"/>
+  <div id="myModal" class="modal"></div>
+  <div id="stepModal" class="modal"></div>
+</div>
+
+<script>
+var dataJson=""
+
+ $.ajax({
+      async: false,
+      type: "POST",
+      url: "utils/getEspecialSupervielle.php",
+      data: {'user': '{__user}', 'objetivo':'{__objetivo_id}', 'inicio':'{__inicio}', 'termino':'{__termino}'},
+      success: function(data) {
+        data = JSON.parse(data)
+        //console.log(data)
+        dataJson=data
+        let trafficLight=""
+        $.each(data, function(index, objetivo){
+          nombre="'"+objetivo["nombre"]+"'"
+          steps="'"
+          trafficLight+='<div style="border: 1px solid;border-width: 2px;height:150px;"><div style="width:29%;float:left;padding:4%;color:#2f14e8b5;font-family: Trebuchet MS, Verdana, sans-serif;font-size: 14px;cursor:pointer; cursor: hand;" data="'+objetivo["id_objetivo"]+'" onclick="abrirPasosObjetivo('+objetivo["id_objetivo"]+', '+nombre+');">'+objetivo["nombre"]+'</div><div align="center" style="width:10%;float:left;padding:4%;">'
+          if(objetivo["estado"]=='uptime'){
+            color='style="background-image: linear-gradient(rgb(52, 228, 15), rgb(52, 228, 15)), radial-gradient(circle at top left, #fff,#b1b1b1);"'
+            trafficLight+='<div class="lamp" '+color+' id="green"/><div class="lamp" id="yellow"/><div class="lamp" id="red"/>'
+          }else if(objetivo["estado"]=='parcial'){
+            color='style="background-image: linear-gradient(rgb(228, 225, 15), rgb(228, 225, 15)), radial-gradient(circle at top left, #fff,#b1b1b1);"'
+            trafficLight+='<div class="lamp" id="red"/><div class="lamp" '+color+' id="yellow"/><div class="lamp"  id="green"/>'
+          }else{
+            color='style="background-image: linear-gradient(rgb(255, 0, 0), rgb(255, 0, 0)), radial-gradient(circle at top left, #fff,#b1b1b1);"'
+            trafficLight+='<div class="lamp"  id="green"/><div class="lamp"  id="yellow" /><div class="lamp" '+color+' id="red"/>'
+          }
+          trafficLight+='</div><div id="chartdiv_'+objetivo["id_objetivo"]+'" style="height: 160;"></div></div>'
+          createChart(objetivo["id_objetivo"], objetivo["disponibilidad"], objetivo["sla"])
+          
+        })
+        $('#trafficLight').append(trafficLight)
+        
+      }
+    })
+ var modalCont=""
+ var modal=""
+  function abrirPasosObjetivo(objetivo, nombre){
+    modal='<div style="display: none;" id="mod_'+objetivo+'" data-'+objetivo+'="false" class="modal-content"><div><span class="cerrar" onclick="cerrar()">&times;</span></div></div>'
+    $('#myModal').append(modal)
+    tag=document.getElementById('mod_'+objetivo).getAttribute('data-'+objetivo)
+    contStep=1
+    $.each(dataJson, function(index, objetivoData){
+      if(objetivoData["id_objetivo"]==objetivo){
+        contStep=(objetivoData["pasos"].length)
+        if(tag=="false"){
+          $.each(objetivoData["pasos"], function(index_p, paso){
+            stepsData=paso
+            step=paso["id_paso"]
+            paso=paso.nombre_paso
+            color='style="background-image: linear-gradient(rgb(52, 228, 15), rgb(52, 228, 15)), radial-gradient(circle at top left, #fff,#b1b1b1);"'
+            if(stepsData.estado=='downtime'){
+              color='style="background-image: linear-gradient(rgb(255, 0, 0), rgb(255, 0, 0)), radial-gradient(circle at top left, #fff,#b1b1b1);"'
+            }
+            div='<div><div style="font-family: Trebuchet MS, Verdana, sans-serif;font-size: 14px;color:#2f14e8b5;width:60%;float:left;padding:1%;cursor:pointer; cursor: hand;" onclick="getData('+objetivo+', '+step+');">'+paso+
+            '</div><div align="center" style="width:10%;float:left;"><div class="lamp" '+color+' id="green"/></div></div>'
+            $('#mod_'+objetivo).append(div)
+          })
+          $('#mod_'+objetivo).attr("data-"+objetivo, "true")
+          
+        }
+      }
+    })
+    heightCont=6*contStep
+    modalCont = document.getElementById("myModal")
+    modal = document.getElementById("mod_"+objetivo)
+    modalCont.style.display = "block";
+    modal.style.display = "block";
+    modal.style.height=heightCont+"%"
+  }
+
+  var modalStep=""
+  var modalContStep=""
+  function getData(objetivo, paso){
+    modalStep='<div style="display: none;" id="mod_'+objetivo+paso+'" data-'+objetivo+'-'+paso+'="false" class="modal-content"><div><span class="cerrar" onclick="cerrarStep()">&times;</span></div></div>'
+    $('#stepModal').append(modalStep)
+    tagStep=document.getElementById('mod_'+objetivo+paso).getAttribute('data-'+objetivo+'-'+paso)
+    $.each(dataJson, function(index, objetivoData){
+      if(objetivoData["id_objetivo"]==objetivo){
+        $.each(objetivoData["pasos"], function(i_steps, steps){
+          if(steps["id_paso"]==paso){
+            if(tagStep=="false"){
+              divStep='<div><table width="100%"><tr><td class="celdanegra10"></td>'
+              $.each(steps["nodos_data"], function(i_nodo, nodo){
+                divStep+='<td style="border: solid 1px #ffffff;" class="celdanegra50">'+nodo.nombre+'</td>'
+              })
+              divStep+='</tr><tr><td class="celdanegra10" width="20%">'+steps.nombre_paso+'</td>'
+              $.each(steps["nodos_data"], function(i_nodo, nodo){
+                if(nodo.codigo_estado=="0"){
+                    color="#55a51c"
+                    estado="ok"
+                }else if(nodo.codigo_estado=='sin monitoreo'){
+                    color="#c4c4c4"
+                    estado="no_monitoreo"
+                }else{
+                  color="#d3222a"
+                  if(nodo.codigo_estado==3){
+                    estado = 'timeout';
+                  }else if(nodo.codigo_estado==13){
+                    estado = 'sin_contenido'
+                  }else if(nodo.codigo_estado==27){
+                    estado = 'timeout_js'
+                  }
+                }
+                divStep+='<td height="22" bgcolor="'+color+'" align="center" width="13%">'
+                divStep+='<i class="sprite sprite-'+estado+'"></i></td>'
+              })
+              divStep+='</tr><tr><td class="celdanegra10" width="20%"></td>'
+              $.each(steps["nodos_data"], function(i_nodo, nodo){
+                divStep+='<td class="celdanegra10" align="center">'+nodo.rendimiento+'</td>'
+              })
+              divStep+='</tr></table></div>'
+              $('#mod_'+objetivo+paso).append(divStep)
+              $('#mod_'+objetivo+paso).attr("data-"+objetivo+"-"+paso, "true")
+
+            }
+          }
+        })
+      }
+    })
+    modalContStep = document.getElementById("stepModal")
+    modalStep = document.getElementById("mod_"+objetivo+paso)
+    modalContStep.style.display = "block";
+    modalStep.style.display = "block";
+    modalStep.style.width=40+"%"
+  }
+
+function cerrarStep(){
+  modalStep.style.display = "none";
+  modalContStep.style.display = "none";
+}
+
+function cerrar(){
+  modalCont.style.display = "none";
+  modal.style.display = "none";
+}
+
+ function createChart(obj, disponibilidad, sla){
+    if(disponibilidad>sla){
+      color='#80ff00'
+    }else{
+      color='#ff0000'
+    }
+     var chart = AmCharts.makeChart("chartdiv_"+obj, {
+      "theme": "none",
+      "type": "gauge",
+      "axes": [{
+        "topTextFontSize": 8,
+        "labelsEnabled": false,
+        "topTextYOffset": 20,
+        "topTextBold": false, 
+        "topText":disponibilidad+' %',
+        "axisColor": "#31d6ea",
+        "axisThickness": 0.5,
+        "endValue": 100,
+        "gridInside": false,
+        "inside": false,
+        "radius": "50%",
+        "tickColor": color,
+        "startAngle": -90,
+        "endAngle": 90,
+        "valueInterval": 50,
+        "bandOutlineAlpha": 0,
+        "showFirstLabel": false,
+        "showLastLabel": false, 
+        "bands": [{
+          "color": color,
+          "endValue": 100,
+          "innerRadius": "105%",
+          "radius": "170%",
+          "gradientRatio": [0.5, 0, -0.5],
+          "startValue": 0
+        }, {
+          "color": "#3cd3a3",
+          "endValue": 0,
+          "innerRadius": "105%",
+          "radius": "170%",
+          "gradientRatio": [0.5, 0, -0.5],
+          "startValue": 0
+        }]
+      }],
+      "arrows": [{
+        "alpha": 1,
+        "innerRadius": "35%",
+        "nailRadius": 0,
+        "radius": "170%",
+        "value":disponibilidad
+      }]
+    });
+   }
+   refresh()
+   function refresh() {
+
+    setTimeout(function () {
+        location.reload()
+    }, 300000);
+}
+</script>

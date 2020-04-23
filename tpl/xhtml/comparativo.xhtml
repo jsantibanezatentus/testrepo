@@ -1,0 +1,162 @@
+<!-- BEGIN BLOQUE_PASOS -->
+<script type="text/javascript">
+
+	var chart_comparativo_{__paso_id};
+	$(document).ready(function() {
+                var es_descarga_pdf = true;
+                if('{es_descarga}'=='true'){
+                   es_descarga_pdf = false;
+                }
+		chart_comparativo_{__paso_id} = new Highcharts.Chart({
+			exporting: { enabled: false},
+			credits : {
+			    enabled : false
+			},
+			chart: {
+				animation:false,
+				height:300,
+				renderTo: 'analytics_comparativo_{__paso_id}',
+				zoomType: false,
+	            resetZoomButton: {
+	                theme: {
+	                    fill: 'white',
+	                    stroke: 'silver',
+	                    r: 0,
+	                    states: {
+	                        hover: {
+	                            fill: '#41739D',
+	                            style: {
+	                                color: 'white'
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+			},
+			title: {
+				enabled:false,
+				text: '',
+			},
+			xAxis: [{
+				lineColor: '#c0c0c0',
+				gridLineWidth: 0.3,
+		        labels: {
+					step: {__step},
+		        },
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Período',
+				},
+				categories: [
+					<!-- BEGIN SERIES_NAME -->
+					 Highcharts.dateFormat('%d/%m', Date.UTC({__series_name})),
+					<!-- END SERIES_NAME -->
+					 
+			    ],
+			}],
+			yAxis: [
+				{
+					lineColor: '#c0c0c0',
+					minRange:4,
+					lineWidth: 1,
+					alignTicks: false,
+					gridLineWidth: 0.3,
+					min: 0,
+					max:100,
+					labels: {
+						formatter: function() {
+							return Highcharts.numberFormat(this.value, 0);
+						}
+					},
+					title: {
+						style: { color: '#5A5A5A' },
+						text: 'Uptime [%]',
+					},
+				},
+				{
+					min:0,
+					minRange: 4,
+					gridLineWidth: 0.3,
+					tickInterval: {__tickInterval_y_rendimiento},
+					max: {__max_y_rendimiento},
+					title: {
+						style: { color: '#5A5A5A' },
+						text: 'Tiempo de Respuesta [s]',
+					},
+					labels: {
+						formatter: function() {
+							if(this.value % 1 != 0)
+								return this.value.toFixed(2);
+							else
+								return this.value;
+							},
+					},
+					opposite: true,
+				},
+				
+			],
+			tooltip: {
+				useHTML:true,
+				style: { fontSize: '11px' },
+				backgroundColor:'rgba(255,255,255,1)',
+				formatter: function() {
+					return '<b>'+this.series.name+':</b> ' + this.y + (this.series.name == 'Uptime' ? ' %' : ' [s]')+'<br/>'+
+					       '<b>Fecha :</b> '+ this.x+'<br/>';
+				},
+			},
+			legend: {
+				enabled:false,
+			},
+	        plotOptions: {
+	            series: {
+                        enableMouseTracking: es_descarga_pdf,
+	                animation: false
+	            },
+	        },
+			series: [		
+				{			
+					name:"Uptime" ,	
+					color:"#55a51c",	
+					type:"column",
+					shadow: false,
+					data: [
+						<!-- BEGIN POINT_ELEMENT_DISPONIBILIDAD -->
+						{__point_value_disponibilidad},
+						<!-- END POINT_ELEMENT_DISPONIBILIDAD -->
+					],
+					{__pointWidth}
+				},	
+				{			
+					name:"Respuesta" ,	
+					color:"#FFE25F",	
+					type:"spline",
+					shadow: false,
+					yAxis: 1,
+					data: [
+						<!-- BEGIN POINT_ELEMENT_RENDIMIENTO -->
+						{__point_value_rendimiento},
+						<!-- END POINT_ELEMENT_RENDIMIENTO -->
+					]
+				},
+			]
+		});
+
+		leyenda(chart_comparativo_{__paso_id}, ['leyenda1anacom_{__paso_id}','leyenda2anacom_{__paso_id}'], true, false, false, false, 'barra', [chart_comparativo_{__paso_id}], '');
+				
+	});
+
+</script>
+
+<div style="page-break-inside: avoid;">
+	<div style="display: {__tiene_titulo};">
+		<div class="txtNegro13" style="padding: 6px; border: solid 1px #ffffff;">{__item_orden}.{__paso_orden}. {__paso_nombre}</div>
+	</div>
+	<div id="analytics_comparativo_{__paso_id}"></div>
+	<table align="center">
+		<tr>
+			<td style="vertical-align:top"><div id="leyenda1anacom_{__paso_id}" style="width:600px"></div></td>
+			<td style="vertical-align:top"><div id="leyenda2anacom_{__paso_id}" style="width:0px"></div></td>
+		</tr>
+	</table>
+</div>
+<!-- END BLOQUE_PASOS -->

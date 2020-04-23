@@ -1,0 +1,24 @@
+[app]
+domain = "http://reporte2.atentus.com/"
+domain_localhost = "http://reporte2.atentus.com:8080/"
+cdn_host="http://10.10.10.238"
+cdn_mobile="http://10.10.10.238"
+cdn_ivr="http://192.168.16.160:8181"
+api_ivr="http://192.168.16.160:8082"
+cdn_elementos="http://10.10.10.238"
+api_host="https://api.atentus.com:8082"
+api_host3="https://10.10.10.121:8082"
+api_interval=300000
+root_path = "/var/www/reporte2.atentus.com/"
+html_to_pdf_app_path = "wkhtmltopdf-amd64"
+html_to_jpg_app_path = "wkhtmltoimage-amd64"
+ext_lib_path = "tools/"
+ext_cgi_path = "/var/www/libreporte/cgi/"
+google_analytics_tracking_id = "UA-XXXXXXXX-X"
+
+[telefonos]
+arg_tel = "+54 (11) 4776 1101"
+chi_tel = "+56 (2) 964 0099"
+per_tel = "+51 6205090  anexo 2"
+col_tel = "+57 (1) 7022 333"
+uru_tel = "+598 (2) 900 2683"

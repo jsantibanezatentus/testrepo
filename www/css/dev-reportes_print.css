@@ -1,0 +1,175 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 11-07-2016, 13:22:58
+    Author     : csepulveda
+*/
+/*** ESTILOS OBLIGATORIOS DE ELEMENTOS ***/
+
+body {
+/*	background-color:#f4f2ee;*/
+	text-align: center;
+}
+
+table {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+td {
+	padding: 0px;
+}
+
+/* ESTILOS DE CELDAS */
+.footer {
+/*	background-color: #f47001;*/
+	padding: 8px 12px 8px;
+	border-top: solid 3px #000000;
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+/*	color: #ffffff;*/
+	text-decoration: none;
+	font-weight: bold;
+	text-align: right;
+/*	text-transform: uppercase;*/
+}
+
+.tituloseccion {
+/*	background-color: #f47001;*/
+	padding: 8px 12px 8px;
+	border-bottom: solid 3px #000000;
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+/*	color: #ffffff;*/
+	text-decoration: none;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.tituloitem {
+	padding: 8px 12px 8px 12px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #525252;
+	text-decoration: none;
+	font-weight: bold;
+	text-transform:uppercase;
+}
+
+.contenidoitem {
+	padding: 0px 12px 12px 12px;
+}
+
+.celdatitulocolumna {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 9px;
+	color: #525252;
+	text-decoration: none;
+	font-weight: bold;
+	border-bottom: solid 1px #000000;
+	padding: 2px;
+}
+
+.celdatitulofila {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #525252;
+	text-decoration: none;
+	font-weight: bold;
+	border-right: solid 1px #000000;
+	padding: 2px 2px 2px 0px;
+}
+
+.celdanegra50 {
+	padding: 2px 2px 2px 2px;
+	background-color: #828282;
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #ffffff;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.linea_abajo {
+	border-top: dashed 1px #d8d7d8;
+}
+
+/*** ESTILOS SOLO DE TEXTOS ***/
+
+.textgris12 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #525252;
+	text-decoration: none;
+	font-weight: normal;
+	padding: 1px;
+}
+
+.textgris8 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 8px;
+	color: #525252;
+	text-decoration: none;
+	font-weight: normal;
+	padding: 2px;
+}
+
+.textgris10 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #525252;
+	text-decoration: none;
+	font-weight: normal;
+	padding: 2px;
+}
+
+.textnegro12 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #323232;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.textdescripcion {
+	font-family: Verdana;
+	font-size: 12px;
+	color: #323232;
+	text-decoration: none;
+	font-weight: normal;
+	text-align: justify;
+}
+
+.txtNegro13 {
+	color: #000000;
+	font-family: Trebuchet MS, Verdana, sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+.textgris14 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #525252;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.textnaranja28 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 28px;
+	color: #f36f00;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+#ocultar{
+	display:none;
+}

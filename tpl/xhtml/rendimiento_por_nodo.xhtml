@@ -1,0 +1,448 @@
+<!-- BEGIN BLOQUE_PASOS -->
+<script type="text/javascript">
+		
+	var chart_rendimiento_detallado_{__paso_id};
+	var chart_rendimiento_detallado_por_isp_{__paso_id};
+	
+	$(document).ready(function() {
+            var color_sla_ok='#5FB404';
+            var color_sla_error='#d22129';
+            var color_plot_bands='rgba(167, 121, 224,0.6)';
+            var color_plot_bands2='rgba(68, 170, 213, 0.1)';
+            var color_plot_bands3='rgba(167, 121, 224,0.6)';
+            var prueba = 'true';
+            var es_descarga_pdf = true;
+            if('{es_descarga}'==true){
+               es_descarga_pdf = false;
+               color_plot_bands = '#a779e0';
+               color_plot_bands2 = '#C0DAF0';
+               color_plot_bands3 = '#a779e0';
+            }
+               
+		chart_rendimiento_detallado_{__paso_id} = new Highcharts.Chart({
+			exporting: { enabled: false},
+			credits : {
+			    enabled : false
+			},
+			chart: {
+				renderTo: 'rendimiento_detallado_estadisticas_{__paso_id}_{__objetivo_id}_{__horario_id_item}', 
+				defaultSeriesType: 'line',
+				zoomType: 'x',
+				height:300,
+				ignoreHiddenSeries : false,
+				marginRight:30,
+				resetZoomButton: {
+				    theme: {
+						fill: 'white',
+						stroke: 'silver',
+						r: 0,
+						states: {
+						    hover: {
+								fill: '#41739D',
+								style: {
+								    color: 'white'
+								}
+						    }
+						}
+			    	}
+				}
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold' },
+				text: 'Información Estadística Consolidada'
+			},
+			xAxis: {
+				lineColor: '#c0c0c0',
+				type: 'datetime',
+				minorGridLineColor: '#E0E0E0',
+			    minorTickLength: 0,
+			    gridLineWidth: 0.3,
+			    showFirstLabel:true,					    
+		        dateTimeLabelFormats: {
+		            second: '%l:%M:%S%P',
+		            minute: '%l:%M%P',
+		            hour: '%H:%M',
+		            day: '<br/><b>%e/%b</b>',
+		            week: '%e. %b',
+		            month: '%b %y',
+		            year: '%Y'
+		        },		
+				title: {
+					useHTML:true,
+					style: { color: '#5A5A5A', fontSize: '12px', fontWeight: 'bold' },
+					text: '<br/>Período'
+				},					        
+		        labels: {
+		        	useHTML: true,
+		        },
+				plotBands: [
+					<!-- BEGIN CONSOLIDADO_HORARIOS -->           
+					{ 
+						from: Date.UTC({__consolidado_range_minimum}),
+						to: Date.UTC({__consolidado_range_maximum}),
+						color: color_plot_bands,
+					},
+					<!-- END CONSOLIDADO_HORARIOS --> 
+				]
+			},
+			yAxis: {
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Tiempo de Respuesta [s]'
+				},
+				labels: {
+					formatter: function() {
+						if(this.value % 1 != 0)
+							return this.value.toFixed(2);
+						else
+							return this.value;
+						},
+				},
+//				min:0,
+				gridLineWidth: 0.3,
+				lineWidth:1,
+						
+				<!-- BEGIN TIENE_MAXIMO -->
+		        tickPositioner: function(min, max) {
+		            var pos,
+		                tickPositions = [],
+		                tickStart = 0;				            
+		            for (pos = tickStart; pos <= {__y_scale_maximum}; pos += ({__y_scale_maximum}/3 )) {
+		                tickPositions.push(pos);
+		            }
+		            return tickPositions;				              
+		        },
+		        <!-- END TIENE_MAXIMO -->					
+				plotBands: [{ 
+					from: {__desviacion_min},
+					to: {__desviacion_max},
+					color: color_plot_bands2,
+					zIndex: 0
+				}],
+			    plotLines: [
+					<!-- BEGIN CONSOLIDADO_TIENE_SLA_OK -->
+					{
+						color: '#54a51c',
+						width: 2,
+						zIndex: 3,
+						value: {__consolidado_sla_ok_value}
+					},
+					{//SLA ok
+						color: '#54a51c',
+						width: 2,
+						value: {__consolidado_sla_ok_value},
+						label: {
+						    text: {__consolidado_sla_ok_value},
+						    style:{
+								color:'#54a51c',
+								'font-size':11,
+						    },
+						    align: 'right',
+						    x: 30,
+						    y:10,
+						},
+						zIndex: 3
+					},
+					<!-- END CONSOLIDADO_TIENE_SLA_OK -->
+					<!-- BEGIN CONSOLIDADO_TIENE_SLA_ERROR -->
+					{
+						color: '#d22129',
+						width: 2,
+						zIndex: 3,
+						value: {__consolidado_sla_error_value}
+					},
+					{//SLA error
+						color: '#d22129',
+						width: 2,
+						value: {__consolidado_sla_error_value},
+						label: {
+						    text: {__consolidado_sla_error_value},
+						    style:{
+							color:'#D22129',
+							'font-size':11
+						    },
+						    align: 'right',
+						    x: 30
+						},
+						zIndex: 3
+					},
+								
+					<!-- END CONSOLIDADO_TIENE_SLA_ERROR -->
+					{
+						color: '#00529e',
+						width: 2,
+						zIndex: 3,
+						value: {__consolidado_prom_line_value},
+						label: {
+						    text: {__consolidado_prom_line_value},
+						    style:{
+								color:'#00529e',
+								'font-size':10
+						    },
+						    align: 'right',
+						    x: 27,
+						    y:3
+						},
+					}
+				],
+			},
+			tooltip: {
+				style: { fontSize: '11px' },
+				backgroundColor:'rgba(255,255,255,1)',
+				formatter: function() {
+					return '<b>'+this.series.name+'</b><br/>'+
+				       '<b>Fecha :      </b>'+Highcharts.dateFormat('%d/%b/%Y %H:%M', this.x)+'<br/>'+
+				       '<b>Tiempo de Respuesta :</b>'+Highcharts.numberFormat(this.y,2,',') +' [s] ';
+				},
+			},
+			legend: {
+				enabled:false
+			},
+	        plotOptions: {
+	            series: {
+                        enableMouseTracking: es_descarga_pdf,
+	                animation: false
+	            }
+	        },					
+	        series: [
+				{
+					name: '{__consolidado_series_name}',
+					color: '#{__consolidado_series_color}',
+					connectNulls:false,
+					marker: {
+						enabled: false
+					},
+					data:[
+						<!-- BEGIN CONSOLIDADO_POINT_ELEMENT -->							
+						[Date.UTC({__consolidado_point_name}),{__consolidado_point_value}],
+						<!-- END CONSOLIDADO_POINT_ELEMENT -->
+					]
+				},
+			]
+		});
+		titulo = chart_rendimiento_detallado_{__paso_id}.title.textStr;
+		titulo=titulo+' '+chart_rendimiento_detallado_{__paso_id}.series[0].name;
+		chart_rendimiento_detallado_{__paso_id}.setTitle({text: titulo});
+
+				
+		chart_rendimiento_detallado_por_isp_{__paso_id} = new Highcharts.Chart({
+			exporting: { enabled: false},
+			credits : {
+			    enabled : false
+			},
+			chart: {
+				renderTo: 'rendimiento_detallado_estadisticas_por_isp_{__paso_id}_{__objetivo_id}_{__horario_id_item}', 
+				defaultSeriesType: 'line',
+				zoomType: 'x',
+				height:300,
+				ignoreHiddenSeries : false,
+				marginRight:30,
+				resetZoomButton: {
+				    theme: {
+						fill: 'white',
+						stroke: 'silver',
+						r: 0,
+						states: {
+						    hover: {
+								fill: '#41739D',
+								style: {
+									color: 'white'
+								}
+					    	}
+						}
+				    }
+				}
+			},
+			title: {
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold' },
+				text: 'Tiempo de Respuesta por Monitor'
+			},
+			xAxis: {
+				lineColor: '#c0c0c0',
+				type: 'datetime',		
+				minorGridLineColor: '#E0E0E0',
+				minorTickLength: 0,
+				gridLineWidth: 0.3,
+				showFirstLabel:true,
+						
+				dateTimeLabelFormats: {
+				    second: '%l:%M:%S%P',
+				    minute: '%l:%M%P',
+				    hour: '%H:%M',
+				    day: '<br/><b>%e/%b</b>',
+				    week: '%e. %b',
+				    month: '%b %y',
+				    year: '%Y'
+				},	
+				title: {
+					useHTML:true,
+					style: { color: '#5A5A5A', fontSize: '12px', fontWeight: 'bold' },
+					text: '<br/>Período'
+				},
+				labels: {
+					useHTML:true,
+				},
+						
+				plotBands: [
+					<!-- BEGIN ISP_HORARIOS -->        
+					{ 
+						from: Date.UTC({__isp_range_minimum}),
+						to: Date.UTC({__isp_range_maximum}),
+						color: color_plot_bands3,
+					},
+					<!-- END ISP_HORARIOS -->
+				]
+			},
+			yAxis: {
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Tiempo de Respuesta [s]',
+				},
+				labels: {
+					formatter: function() {
+						if(this.value % 1 != 0)
+							return this.value.toFixed(2);
+						else
+							return this.value;
+						},
+				},
+				<!-- BEGIN TIENE_MAXIMO -->
+		        tickPositioner: function(min, max) {
+		            var pos,
+		                tickPositions = [],
+		                tickStart = 0;				            
+		            for (pos = tickStart; pos <= {__y_scale_maximum}; pos += ({__y_scale_maximum}/3)) {
+		                tickPositions.push(pos);
+		            }
+		            return tickPositions;				              
+		        },
+		        <!-- END TIENE_MAXIMO -->
+				gridLineWidth: 0.05,
+				lineWidth:1,
+//				min:0,
+			    plotLines: [
+					<!-- BEGIN ISP_TIENE_SLA_ERROR -->
+					{
+						color: '#d22129',
+						width: 2,
+						zIndex: 3,
+						value: {__isp_sla_error_value}
+					},
+					{//SLA error
+						color: '#d22129',
+						width: 2,
+						value: {__isp_sla_error_value},
+						label: {
+						    text: {__isp_sla_error_value},
+						    style:{
+									color:'#D22129',
+									'font-size':11
+						    },
+						    align: 'right',
+						    x: 30
+						},
+						zIndex: 3
+					},							
+					<!-- END ISP_TIENE_SLA_ERROR -->
+					<!-- BEGIN ISP_TIENE_SLA_OK -->            
+					{
+						color: '#54a51c',
+						width: 2,
+						zIndex: 3,
+						value: {__isp_sla_ok_value}
+					},
+					{//SLA ok
+						color: '#54a51c',
+						width: 2,
+						value: {__isp_sla_ok_value},
+						label: {
+						    text: {__isp_sla_ok_value},
+						    style:{
+								color:'#54a51c',
+								'font-size':11,
+						    },
+						    align: 'right',
+						    x: 30,
+						    y:10,
+						},
+						zIndex: 3
+					},
+					<!-- END ISP_TIENE_SLA_OK -->
+			    ],
+			},
+			tooltip: {
+				style: { fontSize: '11px' },
+				backgroundColor:'rgba(255,255,255,1)',
+				formatter: function() {
+					return '<b>'+this.series.name+'</b><br/>'+
+					       '<b>Fecha :</b>'+Highcharts.dateFormat('%d/%b/%Y %H:%M', this.x)+'<br/>'+
+					       '<b>Tiempo de Respuesta :</b>'+Highcharts.numberFormat(this.y,2,',') +' [s] ';
+				},
+			},
+			legend: {
+				enabled:false,
+			},
+	        plotOptions: {
+	            series: {
+                        enableMouseTracking: es_descarga_pdf,
+	                animation: false
+	            }
+	        },
+	        series: [
+				<!-- BEGIN ISP_SERIES_ELEMENT -->
+				{
+					name: '{__isp_series_name}',
+					color: '#{__isp_series_color}',
+					connectNulls: false,
+					marker: {
+						enabled: false,
+	            	},
+					data:[
+						<!-- BEGIN ISP_POINT_ELEMENT -->
+						[Date.UTC({__isp_point_name}),{__isp_point_value}],
+						<!-- END ISP_POINT_ELEMENT -->
+					]
+				},
+				<!-- END ISP_SERIES_ELEMENT -->                    
+			]
+		});
+		if('{__tiene_evento}' !== 'true'){
+		leyenda(chart_rendimiento_detallado_por_isp_{__paso_id}, ['leyenda_rendimiento_detallado1_{__paso_id}_{__objetivo_id}_{__horario_id_item}','leyenda_rendimiento_detallado2_{__paso_id}_{__objetivo_id}_{__horario_id_item}'], true, true, true, true, 'linea', [chart_rendimiento_detallado_por_isp_{__paso_id}], 'Monitores');
+		}else{
+		leyenda(chart_rendimiento_detallado_por_isp_{__paso_id}, ['leyenda_rendimiento_detallado1_{__paso_id}_{__objetivo_id}_{__horario_id_item}','leyenda_rendimiento_detallado2_{__paso_id}_{__objetivo_id}_{__horario_id_item}','leyenda_rendimiento_detallado3_{__paso_id}_{__objetivo_id}_{__horario_id_item}'], true, true, true, true, 'linea', [chart_rendimiento_detallado_por_isp_{__paso_id}], 'Monitores', true);
+		}
+	});
+
+</script>
+<div style="page-break-inside: avoid;">
+	<div style="display: {__tiene_titulo};">
+		<div class="txtNegro13" style="padding: 6px; border: solid 1px #ffffff;">{__item_orden}.{__paso_orden}. {__paso_nombre}</div>
+	</div>
+	<div id="rendimiento_detallado_estadisticas_{__paso_id}_{__objetivo_id}_{__horario_id_item}"></div>
+	<div id="rendimiento_detallado_estadisticas_por_isp_{__paso_id}_{__objetivo_id}_{__horario_id_item}"></div>
+	
+	<table align="center">
+		<tr>
+			<td style="vertical-align:top;"><div id="leyenda_rendimiento_detallado1_{__paso_id}_{__objetivo_id}_{__horario_id_item}" style="width:450px"></div></td>
+			<td style="vertical-align:top;"><div id="leyenda_rendimiento_detallado2_{__paso_id}_{__objetivo_id}_{__horario_id_item}" style="width:150px"></div></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td style="vertical-align:top;"><div id="leyenda_rendimiento_detallado3_{__paso_id}_{__objetivo_id}_{__horario_id_item}" style="width:150px"></div></td>
+		</tr>
+	</table>
+</div>
+<!-- END BLOQUE_PASOS -->
+
+<!--Empieza acordeon-->
+<div class="modal" id="dialog" title="Marcado especial" style="display:none"; ></div>
+
+<script type="text/javascript">
+$(function() {
+	name = '{__name}';
+	// Ejecuta la inialización del acordeon.
+	if ('{__tiene_evento}' == 'true'){
+		createAccordion(name);
+	}
+});
+</script>

@@ -1,0 +1,182 @@
+<script type="text/javascript">
+		
+	var chart_por_dia;
+	$(document).ready(function() {
+                var es_descarga_pdf = true;
+                if('{es_descarga}'=='true'){
+                   es_descarga_pdf = false;
+                }
+		chart_por_dia = new Highcharts.Chart({
+			exporting: { enabled: false},
+			credits : {
+			    enabled : false
+			},
+			height:300,
+			chart: {
+				renderTo: 'rendimiento_por_dia_semana', 
+				defaultSeriesType: 'line',
+				zoomType: 'x',
+				height:300,
+				ignoreHiddenSeries : false,
+				alignTicks: false,
+				marginRight:30,
+				marginTop:20,
+	            resetZoomButton: {
+	                theme: {
+	                    fill: 'white',
+	                    stroke: 'silver',
+	                    r: 0,
+	                    states: {
+	                        hover: {
+	                            fill: '#41739D',
+	                            style: {
+	                                color: 'white'
+	                            }
+	                        }
+	                    }
+	                }
+	            }
+			},
+			title: {
+				enabled:false,
+				style: { color: '#5A5A5A', fontSize: '14px', fontWeight: 'bold' },
+				text: ''
+			},
+			xAxis: {
+				lineColor: '#c0c0c0',
+				minorGridLineColor: '#E0E0E0',
+				minorTickLength: 0,
+				gridLineWidth: 0.3,
+				showFirstLabel:true,
+				tickInterval: 24,
+				categories: [
+					'Lunes 00:00:00','Lunes 01:00:00','Lunes 02:00:00','Lunes 03:00:00','Lunes 04:00:00','Lunes 05:00:00',
+					'Lunes 06:00:00','Lunes 07:00:00','Lunes 08:00:00','Lunes 09:00:00','Lunes 10:00:00','Lunes 11:00:00',
+					'Lunes 12:00:00','Lunes 13:00:00','Lunes 14:00:00','Lunes 15:00:00','Lunes 16:00:00','Lunes 17:00:00',
+					'Lunes 18:00:00','Lunes 19:00:00','Lunes 20:00:00','Lunes 21:00:00','Lunes 22:00:00','Lunes 23:00:00',
+					'Martes 00:00:00','Martes 01:00:00','Martes 02:00:00','Martes 03:00:00','Martes 04:00:00','Martes 05:00:00',
+					'Martes 06:00:00','Martes 07:00:00','Martes 08:00:00','Martes 09:00:00','Martes 10:00:00','Martes 11:00:00',
+					'Martes 12:00:00','Martes 13:00:00','Martes 14:00:00','Martes 15:00:00','Martes 16:00:00','Martes 17:00:00',
+					'Martes 18:00:00','Martes 19:00:00','Martes 20:00:00','Martes 21:00:00','Martes 22:00:00','Martes 23:00:00',
+					'Miercoles 00:00:00','Miercoles 01:00:00','Miercoles 02:00:00','Miercoles 03:00:00','Miercoles 04:00:00','Miercoles 05:00:00',
+					'Miercoles 06:00:00','Miercoles 07:00:00','Miercoles 08:00:00','Miercoles 09:00:00','Miercoles 10:00:00','Miercoles 11:00:00',
+					'Miercoles 12:00:00','Miercoles 13:00:00','Miercoles 14:00:00','Miercoles 15:00:00','Miercoles 16:00:00','Miercoles 17:00:00',
+					'Miercoles 18:00:00','Miercoles 19:00:00','Miercoles 20:00:00','Miercoles 21:00:00','Miercoles 22:00:00','Miercoles 23:00:00',
+					'Jueves 00:00:00','Jueves 01:00:00','Jueves 02:00:00','Jueves 03:00:00','Jueves 04:00:00','Jueves 05:00:00',
+					'Jueves 06:00:00','Jueves 07:00:00','Jueves 08:00:00','Jueves 09:00:00','Jueves 10:00:00','Jueves 11:00:00',
+					'Jueves 12:00:00','Jueves 13:00:00','Jueves 14:00:00','Jueves 15:00:00','Jueves 16:00:00','Jueves 17:00:00',
+					'Jueves 18:00:00','Jueves 19:00:00','Jueves 20:00:00','Jueves 21:00:00','Jueves 22:00:00','Jueves 23:00:00',
+					'Viernes 00:00:00','Viernes 01:00:00','Viernes 02:00:00','Viernes 03:00:00','Viernes 04:00:00','Viernes 05:00:00',
+					'Viernes 06:00:00','Viernes 07:00:00','Viernes 08:00:00','Viernes 09:00:00','Viernes 10:00:00','Viernes 11:00:00',
+					'Viernes 12:00:00','Viernes 13:00:00','Viernes 14:00:00','Viernes 15:00:00','Viernes 16:00:00','Viernes 17:00:00',
+					'Viernes 18:00:00','Viernes 19:00:00','Viernes 20:00:00','Viernes 21:00:00','Viernes 22:00:00','Viernes 23:00:00',
+					'Sabado 00:00:00','Sabado 01:00:00','Sabado 02:00:00','Sabado 03:00:00','Sabado 04:00:00','Sabado 05:00:00',
+					'Sabado 06:00:00','Sabado 07:00:00','Sabado 08:00:00','Sabado 09:00:00','Sabado 10:00:00','Sabado 11:00:00',
+					'Sabado 12:00:00','Sabado 13:00:00','Sabado 14:00:00','Sabado 15:00:00','Sabado 16:00:00','Sabado 17:00:00',
+					'Sabado 18:00:00','Sabado 19:00:00','Sabado 20:00:00','Sabado 21:00:00','Sabado 22:00:00','Sabado 23:00:00',					                 
+					'Domingo 00:00:00','Domingo 01:00:00','Domingo 02:00:00','Domingo 03:00:00','Domingo 04:00:00','Domingo 05:00:00',
+					'Domingo 06:00:00','Domingo 07:00:00','Domingo 08:00:00','Domingo 09:00:00','Domingo 10:00:00','Domingo 11:00:00',
+					'Domingo 12:00:00','Domingo 13:00:00','Domingo 14:00:00','Domingo 15:00:00','Domingo 16:00:00','Domingo 17:00:00',
+					'Domingo 18:00:00','Domingo 19:00:00','Domingo 20:00:00','Domingo 21:00:00','Domingo 22:00:00','Domingo 23:00:00',
+				],	    
+				labels: {
+					formatter: function() {
+						if(!this.value){
+							return '';
+						}
+						nombre = this.value.split(' ');
+						return '<b>'+nombre[0]+'</b>';
+					},
+				},
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Días',
+				},				        
+			},
+			yAxis: {
+				title: {
+					style: { color: '#5A5A5A' },
+					text: 'Tiempo de Respuesta [s]'
+				},
+				labels: {
+					formatter: function() {
+						if(this.value % 1 != 0)
+							return this.value.toFixed(2);
+						else
+							return this.value;
+						},
+				},
+
+				gridLineWidth: 0.3,
+				min:0,
+				lineWidth:1,
+				<!-- BEGIN TIENE_MAXIMO -->
+		        tickPositioner: function(min, max) {
+		            var pos,
+		                tickPositions = [],
+		                tickStart = 0;				            
+		            for (pos = tickStart; pos <= {__y_scale_maximum}; pos += ({__y_scale_maximum}/3)) {
+		                tickPositions.push(pos);
+		            }
+		            return tickPositions;				              
+		        },
+		        <!-- END TIENE_MAXIMO -->
+				        
+				lineColor: '#c0c0c0',
+			},
+			tooltip: {
+				style: { fontSize: '11px' },
+				backgroundColor:'rgba(255,255,255,1)',
+				formatter: function() {
+					return '<b>'+this.series.name+'</b><br/>'+
+					       '<b>Fecha :</b> '+ this.x+'<br/>'+
+					       '<b>Tiempo de Respuesta :</b> '+Highcharts.numberFormat(this.y,2,',')+' [s]';
+				},
+			},
+			legend: {
+				enabled:false,
+			},
+	        plotOptions: {
+	            series: {
+                        enableMouseTracking: es_descarga_pdf,
+	                animation: false
+	            }
+	        },
+	        series: [
+		        <!-- BEGIN SERIES_ELEMENT -->
+				{
+					name: '{__series_name}',
+					color: '#{__series_color}',
+			        marker: {
+	        	        enabled: true,
+	        	        radius:2,
+		            },							           																		
+					data:[
+						<!-- BEGIN POINT_ELEMENT -->
+						{
+							name:'{__point_name}',
+						    y:{__point_value},
+						},
+						<!-- END POINT_ELEMENT -->
+				    ]	
+				},
+				<!-- END SERIES_ELEMENT -->                    
+			]
+		});
+				
+		//ADAPTAR LEYENDA 
+		leyenda(chart_por_dia, ['leyenda_por_dia1', 'leyenda_por_dia2'], true, false, false, false, 'linea', [chart_por_dia], 'Pasos');
+				
+	});
+
+</script>
+
+<div style="page-break-inside: avoid;">
+	<div id="rendimiento_por_dia_semana"></div>
+	<table align="center">
+		<tr>
+			<td style="vertical-align:top"><div id="leyenda_por_dia1" style="width:600px"></div></td>
+			<td style="vertical-align:top"><div id="leyenda_por_dia2" style="width:0px"></div></td>
+		</tr>
+	</table>
+</div>

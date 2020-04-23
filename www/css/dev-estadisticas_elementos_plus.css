@@ -1,0 +1,3 @@
+.highcharts-button{display: none}
+.tr_tooltip:nth-child(odd){background-color:#cacfc8}
+.tr_tooltip:hover{background-color:yellow}

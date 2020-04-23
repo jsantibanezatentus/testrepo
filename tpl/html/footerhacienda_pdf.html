@@ -1,0 +1,37 @@
+<html>
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+                <script>
+                        function subst() {
+                                var vars = {};
+                                var x = document.location.search.substring(1).split('&');
+                                for(var i in x) {
+                                        var z = x[i].split('=',2);
+                                        vars[z[0]] = unescape(z[1]);
+                                }
+                                var x=['frompage','topage','page','webpage','section','subsection','subsubsection'];
+                                for(var i in x) {
+                                        var y = document.getElementsByClassName(x[i]);
+                                        for(var j=0; j<y.length; ++j) {
+                                                y[j].textContent = vars[x[i]];
+                                        }
+                                        if(vars['page'] == 1){
+                                            document.getElementById("FakeHeaders").style.display = 'none';
+								        }
+								        else{
+								            document.getElementById("FakeHeaders").style.display = 'block';
+								        }
+                                }
+						}
+                </script>
+        </head>
+        <body onload="subst()">
+                <table width="100%" id="FakeHeaders">
+                        <tr id="hacienda">
+                                <td  style="font-family: Verdana; font-size: 10px; color: #525252;" nowrap>Página <spann
+ class="page"></span> de <span class="topage"></span></td>
+                                <td ><span style="font-family: Verdana; font-size: 10px; color: #525252; text-align: right;">Atentus S.A. | El contenido y dise&#xF1;o de este informe son de propiedad de Atentus S.A.</span></td>
+                        </tr>
+                </table>
+        </body>
+</html>

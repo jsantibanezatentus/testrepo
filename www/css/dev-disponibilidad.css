@@ -1,0 +1,55 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 11-07-2016, 13:20:19
+    Author     : csepulveda
+*/
+.cuadro1 {	
+	opacity:0.3;
+	cursor:pointer;
+}
+
+.cuadro2 {	
+	cursor:pointer;
+}
+
+.escala9 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 9px;
+	color: #323232;
+	text-decoration: none;
+	cursor:pointer;
+}
+
+.escala9b {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 9px;
+	color: #323232;
+	text-decoration: none;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+.separaciones1 {
+	stroke:black;
+	stroke-width:0.1;
+}
+
+.separaciones7 {
+	stroke:black;
+	stroke-width:0.7;
+}
+
+.accordion {
+	page-break-inside: avoid;
+    width: 630px;
+    float: right;
+    height: auto;
+}
+
+.accordion p {
+	height: 160px;
+}

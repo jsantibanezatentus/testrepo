@@ -1,0 +1,83 @@
+<link rel="stylesheet" href="tools/jquery/css/jquery-ui-css/jquery-ui-1.10.min.css"></link>
+<script type="text/javascript" src="tools/jquery/js/jquery-ui-1.10.min.js"></script>
+<!-- BEGIN BLOQUE_MONITORES -->
+<script type="text/javascript">
+var chart_disponibilidad_consolidado;
+$(document).ready(function() {
+	
+	//Asignación de variables.
+	var disponibilidadConsolidada_{__monitor_id} = new disponibilidad();
+	disponibilidadConsolidada_{__monitor_id}.contenedor_div = 'disponibilidad_consolidada_div_{__monitor_id}_{__resource_id}';
+	disponibilidadConsolidada_{__monitor_id}.contenedor_svg = 'disponibilidad_consolidada_svg_{__monitor_id}_{__resource_id}';
+	disponibilidadConsolidada_{__monitor_id}.contenedor = 'disponibilidad_consolidada_g_{__monitor_id}_{__resource_id}';
+	disponibilidadConsolidada_{__monitor_id}.nombreGrafico = 'disponibilidad_consolidada_ids_{__monitor_id}_{__resource_id}';
+	disponibilidadConsolidada_{__monitor_id}.link_eventos="{__link_eventos}";
+	disponibilidadConsolidada_{__monitor_id}.asociar();
+	disponibilidadConsolidada_{__monitor_id}.monitor_id='{__monitor_id}';
+	
+	//VARIABLE QUE ALMACENA LOS PUNTOS A DIBUJAR
+	disponibilidadConsolidada_{__monitor_id}.datos = {{__datos}};
+	disponibilidadConsolidada_{__monitor_id}.horario_habil = [{__horario_habil}];
+ 
+	//Variable que toma los elementos asociados a los id de los objetivos y los enlaza de la siguiente forma
+	//[obj_id,["nombre Objetivo",padre,expandido, estado triangulo (rotado o no)]
+	disponibilidadConsolidada_{__monitor_id}.resources = [<!-- BEGIN BLOQUE_RESOURCES -->
+    										["{__resource_id}",["{__resource_name}","{__resource_parent}",true,false]],
+   										   <!-- END BLOQUE_RESOURCES -->
+    									  ];
+	
+	//Usada para indicar el nivel asociado al objetivo (El nivel es la cantidad de antecesores que tiene)
+	disponibilidadConsolidada_{__monitor_id}.grupos={<!-- BEGIN BLOQUE_GRUPOS -->
+										"{__grupo_id}":0,
+									  <!-- END BLOQUE_GRUPOS -->
+									  };
+
+	//el alto se determina por  la cantidad de objetivos-paso-monitor que existan y los múltiplica por 20 pixeles
+	disponibilidadConsolidada_{__monitor_id}.alto=(disponibilidadConsolidada_{__monitor_id}.resources.length+1)*20;
+	disponibilidadConsolidada_{__monitor_id}.altoTotal=disponibilidadConsolidada_{__monitor_id}.alto+60;
+	document.getElementById(disponibilidadConsolidada_{__monitor_id}.contenedor_div).setAttribute("style","height:"+(disponibilidadConsolidada_{__monitor_id}.alto+80)+"px; width: "+(disponibilidadConsolidada_{__monitor_id}.anchoTotal + 10)+"px; overflow-X:auto; overflow-Y:hidden;");
+	disponibilidadConsolidada_{__monitor_id}.tipo = "{__tipo_id}";
+
+	//modifica el alto por la cantidad de elementos a gráficar
+	document.getElementById('disponibilidad_consolidada_g_{__monitor_id}_{__resource_id}').setAttribute("height", disponibilidadConsolidada_{__monitor_id}.alto+60);
+	document.getElementById('disponibilidad_consolidada_svg_{__monitor_id}_{__resource_id}').setAttribute("height", disponibilidadConsolidada_{__monitor_id}.alto+60);
+	document.getElementById('disponibilidad_consolidada_div_{__monitor_id}_{__resource_id}').setAttribute("height", disponibilidadConsolidada_{__monitor_id}.alto+300);
+	disponibilidadConsolidada_{__monitor_id}.fechaMayor = disponibilidadConsolidada_{__monitor_id}.buscaFechaMayor();
+	disponibilidadConsolidada_{__monitor_id}.fechaMenor = disponibilidadConsolidada_{__monitor_id}.buscaFechaMenor();
+	disponibilidadConsolidada_{__monitor_id}.segundosTotales = 172800;
+	diferenciaT = (disponibilidadConsolidada_{__monitor_id}.diferenciaEntreFechas(disponibilidadConsolidada_{__monitor_id}.fechaMenor, disponibilidadConsolidada_{__monitor_id}.fechaMayor));
+	disponibilidadConsolidada_{__monitor_id}.dias=(diferenciaT)/86400;
+	disponibilidadConsolidada_{__monitor_id}.diasCalendario = disponibilidadConsolidada_{__monitor_id}.dias;
+	
+	//LLAMADO A LA FUNCIÓN QUE DIBUJA EL EJE Y
+	if ({__pdf} != true) {
+		disponibilidadConsolidada_{__monitor_id}.creaBarraZonaHoraria(disponibilidadConsolidada_{__monitor_id}.escala,true,{__monitor_id});
+	}
+	
+	disponibilidadConsolidada_{__monitor_id}.creaEjeY(disponibilidadConsolidada_{__monitor_id}.escala,true);
+	disponibilidadConsolidada_{__monitor_id}.creaCalendario(disponibilidadConsolidada_{__monitor_id}.escala);
+	disponibilidadConsolidada_{__monitor_id}.creaEscalas();
+
+});
+
+</script>
+<div id = 'div' style="page-break-inside: avoid;">
+	<div style="display: {__tiene_titulo};">
+		<div class="txtNegro13" style="padding: 6px; border: solid 1px #ffffff;">{__item_orden}.{__monitor_orden}. {__monitor_nombre}</div>
+	</div>
+	<div style="overflow-x: auto; width:100%;" id="disponibilidad_consolidada_div_{__monitor_id}_{__resource_id}"></div>
+	
+</div>
+<!-- END BLOQUE_MONITORES -->
+
+<div class="modal" id="dialog" title="Marcado especial" style="display:none"; >
+</div>
+<script type="text/javascript">
+$(function() {
+	name = '{__name}';
+	// Ejecuta la inialización del acordeon.
+	if ('{__tiene_evento}' == 'true'){
+		createAccordion(name);	
+	}	
+});	
+</script>
